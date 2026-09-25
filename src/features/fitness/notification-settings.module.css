@@ -1,0 +1,11 @@
+.notifications { padding: 24px 0; border-top: 1px solid #e2e8da; border-bottom: 1px solid #e2e8da; margin: 28px 0; }
+.heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #42694e; }
+.heading p, .info, .notice { margin-top: 5px; color: #77836f; font-size: 11px; line-height: 1.6; }
+.enable, .disable { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 42px; margin-top: 16px; padding: 9px 13px; border-radius: 8px; font-size: 12px; font-weight: 650; }
+.enable { color: white; background: #42694e; }
+.disable { color: #6e7869; background: #edf1e7; }
+.options { display: grid; gap: 4px; margin-top: 14px; }
+.options label { flex-direction: row; align-items: center; gap: 10px; min-height: 42px; margin: 0; cursor: pointer; }
+.options input { width: 20px; height: 20px; flex-shrink: 0; accent-color: #42694e; }
+.notice { color: #42694e; }
+.notifications button:disabled { cursor: default; opacity: .5; }

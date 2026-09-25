@@ -53,3 +53,7 @@ O consumo de água começa em zero e cada toque soma uma garrafa inteira, inclus
 O dia segue a data local do dispositivo. Checkboxes e água recomeçam no dia seguinte. Alterações no plano e nas metas valem para hoje e os próximos dias, preservando snapshots anteriores. A sequência conta dias consecutivos com todas as etapas concluídas; o dia atual pendente não interrompe a sequência de ontem. A conclusão do treino é explícita e independente das marcações de exercícios.
 
 Backups são validados antes da restauração e só substituem os dados do perfil ativo após confirmação. Alterações são aplicadas imediatamente na interface e persistidas no Neon em sequência; falhas de sincronização aparecem no topo da aplicação.
+
+## Notificações
+
+A configuração de Web Push, das chaves VAPID e do agendador está em [`docs/notifications.md`](docs/notifications.md).

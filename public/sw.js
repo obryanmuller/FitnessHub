@@ -1,4 +1,4 @@
-const CACHE_NAME = "fitnesshub-v3";
+const CACHE_NAME = "fitnesshub-v4";
 const APP_SHELL = ["/", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png"];
 
 self.addEventListener("install", (event) => {
@@ -10,6 +10,30 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(caches.keys().then((keys) => Promise.all(
     keys.filter((key) => key.startsWith("fitnesshub-") && key !== CACHE_NAME).map((key) => caches.delete(key)),
   )).then(() => self.clients.claim()));
+});
+
+self.addEventListener("push", (event) => {
+  let payload = { title: "FitnessHub", body: "Você tem um novo lembrete.", url: "/", tag: "fitnesshub-reminder" };
+  try { if (event.data) payload = { ...payload, ...event.data.json() }; } catch {}
+  event.waitUntil(self.registration.showNotification(payload.title, {
+    body: payload.body,
+    icon: "/icons/icon-192.png",
+    badge: "/icons/icon-192.png",
+    tag: payload.tag,
+    data: { url: payload.url },
+  }));
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const target = new URL(event.notification.data?.url || "/", self.location.origin).href;
+  event.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(async (windows) => {
+    for (const client of windows) {
+      if ("navigate" in client) await client.navigate(target);
+      if ("focus" in client) return client.focus();
+    }
+    return self.clients.openWindow(target);
+  }));
 });
 
 self.addEventListener("fetch", (event) => {
