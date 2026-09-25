@@ -1,0 +1,14 @@
+.profileBar { display: flex; align-items: center; gap: 8px; max-width: 560px; min-height: 58px; margin: auto; padding: max(10px, env(safe-area-inset-top)) 22px 8px; color: #405a4a; background: #f8f9f4; }
+.profileSelect { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; font-size: 11px; font-weight: 650; color: #718071; }
+.profileSelect span { flex-shrink: 0; }
+.profileSelect select { min-width: 0; flex: 1; height: 40px; padding: 0 32px 0 10px; border: 1px solid #d8e1d1; border-radius: 8px; color: #294235; background: #fbfcf8; font: inherit; font-size: 14px; }
+.profileAction, .newProfile button { display: inline-grid; place-items: center; flex-shrink: 0; width: 40px; height: 40px; border-radius: 8px; color: #42694e; cursor: pointer; }
+.newProfile { display: flex; align-items: flex-end; gap: 8px; max-width: 516px; margin: 0 auto 8px; color: #405a4a; }
+.newProfile label { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 5px; font-size: 11px; font-weight: 650; }
+.newProfile input { width: 100%; min-width: 0; height: 42px; border: 1px solid #d8e1d1; border-radius: 8px; padding: 8px 10px; color: #294235; background: #fbfcf8; font: inherit; font-size: 16px; }
+.newProfile button { height: 42px; color: white; background: #42694e; }
+.profileSelect select:focus-visible, .profileAction:focus-visible, .newProfile :is(input, button):focus-visible { outline: 3px solid #42694e; outline-offset: 2px; }
+.profileAction:hover { background: #eaf0e3; }
+.newProfile button:disabled { opacity: .5; cursor: default; }
+@media (min-width: 600px) { .profileBar { padding-left: 34px; padding-right: 34px; } .newProfile { max-width: 492px; } }
+@media (max-width: 350px) { .profileBar { padding-left: 17px; padding-right: 17px; } .profileSelect span { display: none; } .newProfile { margin-left: 17px; margin-right: 17px; } }
