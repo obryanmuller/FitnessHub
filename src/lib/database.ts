@@ -6,8 +6,8 @@ let client: NeonQueryFunction<false, false> | undefined;
 let schemaReady: Promise<unknown> | undefined;
 
 function connectionString(): string {
-  const value = process.env.DATABASE_URL ?? process.env.POSTGRES_URL ?? process.env.NEON_DATABASE_URL;
-  if (!value) throw new Error("DATABASE_URL is not configured");
+  const value = process.env.NEON_DATABASE_URL ?? process.env.DATABASE_URL ?? process.env.POSTGRES_URL;
+  if (!value) throw new Error("NEON_DATABASE_URL is not configured");
   return value;
 }
 
