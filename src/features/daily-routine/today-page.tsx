@@ -47,10 +47,10 @@ export function TodayPage() {
 
         <p className={styles.date}>{currentDate}</p>
 
-        <h1>Visão geral</h1>
+        <h1>Olá, {data.profile.name}</h1>
 
         <p className={styles.subtitle}>
-          Sua rotina e progresso em um só lugar.
+          Acompanhe sua rotina, metas e progresso.
         </p>
       </header>
 
