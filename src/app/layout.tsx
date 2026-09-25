@@ -23,10 +23,6 @@ export const metadata: Metadata = {
     title: "FitnessHub",
     statusBarStyle: "default",
   },
-  icons: {
-    icon: "/icon.svg",
-    apple: "/icon.svg",
-  },
 };
 
 export const viewport: Viewport = {
