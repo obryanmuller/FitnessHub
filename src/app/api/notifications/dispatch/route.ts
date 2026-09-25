@@ -1,6 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 import { database } from "@/lib/database";
-import { isFitnessData, WORKOUT_ID, type Routine } from "@/features/fitness/model";
+import { isFitnessData, workoutPlanForDate, WORKOUT_ID, type Routine, type WorkoutDayPlan } from "@/features/fitness/model";
 import { isNotificationSettings, sendPush, type NotificationSettings } from "@/lib/push-notifications";
 
 type SubscriptionRow = {
@@ -36,11 +36,13 @@ function due(now: number, time: string): boolean {
   return now >= scheduled && now - scheduled < 10;
 }
 
-function routineReminder(date: string, item: Routine, workout: boolean): Reminder {
+function routineReminder(date: string, item: Routine, workout: boolean, plan?: WorkoutDayPlan): Reminder {
   return {
     key: `${date}:routine:${item.id}:${item.time}`,
-    title: workout ? "Hora do treino" : item.title,
-    body: workout ? item.entries.join(" · ") : `Sua rotina de ${item.title.toLocaleLowerCase("pt-BR")} está esperando.`,
+    title: workout ? `Hora de ${plan?.title ?? "treinar"}` : item.title,
+    body: workout
+      ? (plan?.kind === "cardio" ? "Seu cardio está esperando." : `${plan?.exercises.length ?? 0} exercícios na ficha de hoje.`)
+      : `Sua rotina de ${item.title.toLocaleLowerCase("pt-BR")} está esperando.`,
     url: workout ? "/#treinos" : "/#hoje",
   };
 }
@@ -52,7 +54,10 @@ function reminders(row: SubscriptionRow): Reminder[] {
   const result: Reminder[] = [];
   for (const item of row.data.routine) {
     const workout = item.id === WORKOUT_ID;
-    if (due(now.minutes, item.time) && ((workout && settings.workout) || (!workout && settings.meals))) result.push(routineReminder(now.date, item, workout));
+    if (due(now.minutes, item.time) && ((workout && settings.workout) || (!workout && settings.meals))) {
+      const plan = workout ? workoutPlanForDate(row.data, now.date) : undefined;
+      result.push(routineReminder(now.date, item, workout, plan));
+    }
   }
   if (settings.water && now.minutes >= 8 * 60 && now.minutes <= 20 * 60 && (now.minutes - 8 * 60) % 120 < 10) {
     const slot = Math.floor((now.minutes - 8 * 60) / 120);

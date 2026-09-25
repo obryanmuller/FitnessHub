@@ -38,7 +38,7 @@ Não coloque a connection string em uma variável `NEXT_PUBLIC_*`: ela deve fica
 - Perfis: criação e troca de perfis independentes, sem login.
 - Hoje: rotina em timeline, checkboxes, sequência de dias completos, água e último peso.
 - Alimentação: adicionar, editar e remover refeições e horários. O plano inicial vem da rotina existente.
-- Treinos: nome e horário do treino diário, cadastro de exercícios, séries, repetições, carga, checkboxes por dia e conclusão do treino.
+- Treinos: fichas independentes por dia da semana, musculação de segunda a sexta, cardio no fim de semana, exercícios, duração, carga e conclusão diária.
 - Progresso: registro/atualização de peso por data, gráfico dos últimos 14 registros, lista de pesagens e consulta do histórico diário.
 - Perfil: nome, meta de água, capacidade da garrafa, meta opcional de peso, exportação e restauração de backup JSON.
 

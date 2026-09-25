@@ -5,7 +5,7 @@ import ts from 'typescript';
 
 const source = readFileSync(new URL('../src/features/fitness/model.ts', import.meta.url), 'utf8');
 const compiled = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022 } }).outputText;
-const { dayKey, initialData, getDay, changeDay, changePlan, toggleId, streak, isFitnessData, validDate } = await import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`);
+const { dayKey, initialData, getDay, changeDay, changePlan, changeWorkoutDay, defaultWeeklyWorkouts, toggleId, streak, isFitnessData, upgradeFitnessData, validDate, workoutPlanForWeekday } = await import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`);
 const routine = [
   { id: 'breakfast', time: '05:30', title: 'Pré-treino', entries: ['Banana'] },
   { id: 'workout-gym', time: '06:00', title: 'Academia', entries: ['Musculação'] },
@@ -67,4 +67,32 @@ test('reject invalid dates, impossible values, duplicate and orphan IDs, unsuppo
   assert.equal(isFitnessData(changeDay(data, '2026-09-24', (day) => ({ ...day, completed: ['breakfast', 'breakfast'] }))), false);
   assert.equal(isFitnessData(changeDay(data, '2026-09-24', (day) => ({ ...day, exerciseCompleted: ['missing'] }))), false);
   assert.equal(isFitnessData(null), false);
+});
+
+test("weekly plan defaults to strength on weekdays and cardio on weekends", () => {
+  const data = initialData(routine);
+  for (const weekday of ["1", "2", "3", "4", "5"]) assert.equal(workoutPlanForWeekday(data, weekday).kind, "strength");
+  assert.equal(workoutPlanForWeekday(data, "6").kind, "cardio");
+  assert.equal(workoutPlanForWeekday(data, "0").kind, "cardio");
+});
+
+test("editing one weekday updates today without changing past snapshots", () => {
+  const exercise = { id: "row", name: "Remada", sets: 3, reps: "10", load: "20 kg" };
+  let data = initialData(routine);
+  data = changeDay(data, "2026-09-20", (day) => ({ ...day, exercises: [exercise] }));
+  data = changeWorkoutDay(data, "2026-09-21", "1", { ...defaultWeeklyWorkouts()["1"], title: "Costas", exercises: [exercise] });
+  assert.equal(workoutPlanForWeekday(data, "1").title, "Costas");
+  assert.equal(getDay(data, "2026-09-21").exercises[0].name, "Remada");
+  assert.equal(data.days["2026-09-20"].exercises[0].name, "Remada");
+  assert.equal(workoutPlanForWeekday(data, "2").exercises.length, 0);
+  assert.equal(isFitnessData(data), true);
+});
+
+test("legacy exercises migrate to the current weekday", () => {
+  const legacy = initialData(routine);
+  delete legacy.weeklyWorkouts;
+  legacy.exercises = [{ id: "legacy", name: "Supino", sets: 3, reps: "10", load: "" }];
+  const migrated = upgradeFitnessData(legacy, new Date(2026, 8, 21, 12));
+  assert.equal(workoutPlanForWeekday(migrated, "1").exercises[0].name, "Supino");
+  assert.equal(workoutPlanForWeekday(migrated, "2").exercises.length, 0);
 });

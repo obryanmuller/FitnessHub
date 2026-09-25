@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { todayDashboardMock } from "@/data/today-dashboard";
-import { dayKey, initialData, isFitnessData, type FitnessData } from "./model";
+import { dayKey, initialData, isFitnessData, upgradeFitnessData, type FitnessData } from "./model";
 
 const LEGACY_STORAGE_KEY = "fitnesshub.personal.v1";
 const ACTIVE_PROFILE_KEY = "fitnesshub.active-profile.v1";
@@ -38,7 +38,7 @@ function legacyData(): FitnessData | null {
     const saved = localStorage.getItem(LEGACY_STORAGE_KEY);
     if (!saved) return null;
     const parsed: unknown = JSON.parse(saved);
-    return isFitnessData(parsed) ? parsed : null;
+    return isFitnessData(parsed) ? upgradeFitnessData(parsed) : null;
   } catch {
     return null;
   }
@@ -52,7 +52,7 @@ async function loadProfile(id: string, profiles: FitnessProfile[], version: numb
   if (!isFitnessData(result.data)) throw new Error("O perfil salvo no banco contém dados inválidos.");
   if (version !== requestVersion) return;
   remember(id);
-  snapshot = { data: result.data, profiles, activeProfileId: id, today: dayKey(), ready: true, error: "" };
+  snapshot = { data: upgradeFitnessData(result.data), profiles, activeProfileId: id, today: dayKey(), ready: true, error: "" };
   emit();
 }
 
@@ -145,7 +145,7 @@ export function saveFitness(update: (data: FitnessData) => FitnessData, _replace
   void _replace;
   if (!snapshot.ready || !snapshot.activeProfileId) return false;
   try {
-    const next = update(snapshot.data);
+    const next = upgradeFitnessData(update(snapshot.data));
     if (!isFitnessData(next)) throw new Error("Os dados informados são inválidos.");
     const profileId = snapshot.activeProfileId;
     snapshot = {

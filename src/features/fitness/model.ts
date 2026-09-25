@@ -1,6 +1,10 @@
 export type Routine = { id: string; time: string; title: string; entries: string[] };
 export type Exercise = { id: string; name: string; sets: number; reps: string; load: string };
 export type Profile = { name: string; waterGoal: number; bottleMl: number; targetKg: number | null };
+export type Weekday = "0" | "1" | "2" | "3" | "4" | "5" | "6";
+export type WorkoutKind = "strength" | "cardio";
+export type WorkoutDayPlan = { title: string; kind: WorkoutKind; exercises: Exercise[] };
+export type WeeklyWorkouts = Record<Weekday, WorkoutDayPlan>;
 export type Day = {
   routine: Routine[];
   exercises: Exercise[];
@@ -14,14 +18,56 @@ export type FitnessData = {
   profile: Profile;
   routine: Routine[];
   exercises: Exercise[];
+  weeklyWorkouts?: WeeklyWorkouts;
   days: Record<string, Day>;
   weights: { date: string; kg: number }[];
 };
 
 export const WORKOUT_ID = "workout-gym";
+export const WEEKDAYS: Weekday[] = ["1", "2", "3", "4", "5", "6", "0"];
 
 export function dayKey(date = new Date()): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+export function weekdayFromDateKey(key: string): Weekday {
+  return String(new Date(`${key}T12:00:00`).getDay()) as Weekday;
+}
+
+export function defaultWeeklyWorkouts(): WeeklyWorkouts {
+  return {
+    "1": { title: "Treino A", kind: "strength", exercises: [] },
+    "2": { title: "Treino B", kind: "strength", exercises: [] },
+    "3": { title: "Treino C", kind: "strength", exercises: [] },
+    "4": { title: "Treino D", kind: "strength", exercises: [] },
+    "5": { title: "Treino E", kind: "strength", exercises: [] },
+    "6": { title: "Cardio", kind: "cardio", exercises: [] },
+    "0": { title: "Cardio", kind: "cardio", exercises: [] },
+  };
+}
+
+export function upgradeFitnessData(data: FitnessData, date = new Date()): FitnessData {
+  if (data.weeklyWorkouts) return data;
+  const weeklyWorkouts = defaultWeeklyWorkouts();
+  if (data.exercises.length) {
+    const weekday = String(date.getDay()) as Weekday;
+    weeklyWorkouts[weekday] = { ...weeklyWorkouts[weekday], exercises: data.exercises.map((exercise) => ({ ...exercise })) };
+  }
+  return { ...data, weeklyWorkouts };
+}
+
+export function workoutPlanForWeekday(data: FitnessData, weekday: Weekday): WorkoutDayPlan {
+  return data.weeklyWorkouts?.[weekday] ?? defaultWeeklyWorkouts()[weekday];
+}
+
+export function workoutPlanForDate(data: FitnessData, key: string): WorkoutDayPlan {
+  return workoutPlanForWeekday(data, weekdayFromDateKey(key));
+}
+
+export function workoutExerciseCount(data: FitnessData): number {
+  return data.weeklyWorkouts
+    ? Object.values(data.weeklyWorkouts).reduce((total, plan) => total + plan.exercises.length, 0)
+    : data.exercises.length;
 }
 
 export function initialData(routine: Routine[]): FitnessData {
@@ -30,15 +76,25 @@ export function initialData(routine: Routine[]): FitnessData {
     profile: { name: "Bryan", waterGoal: 3000, bottleMl: 800, targetKg: null },
     routine: routine.map(({ id, time, title, entries }) => ({ id, time, title, entries: [...entries] })),
     exercises: [],
+    weeklyWorkouts: defaultWeeklyWorkouts(),
     days: {},
     weights: [],
   };
 }
 
+function routineForDate(data: FitnessData, key: string): Routine[] {
+  const plan = workoutPlanForDate(data, key);
+  return data.routine.map((item) => item.id === WORKOUT_ID ? {
+    ...item,
+    title: plan.title,
+    entries: [plan.kind === "cardio" ? "Cardio" : `${plan.exercises.length} exercícios`],
+  } : item);
+}
+
 export function getDay(data: FitnessData, key: string): Day {
   return data.days[key] ?? {
-    routine: data.routine,
-    exercises: data.exercises,
+    routine: routineForDate(data, key),
+    exercises: workoutPlanForDate(data, key).exercises,
     completed: [],
     exerciseCompleted: [],
     waterMl: 0,
@@ -55,19 +111,38 @@ export function toggleId(ids: string[], id: string): string[] {
 }
 
 // Plan changes apply from today onward; older day snapshots remain intact.
-export function changePlan(data: FitnessData, key: string, routine: Routine[], exercises = data.exercises): FitnessData {
+export function changePlan(data: FitnessData, key: string, routine: Routine[], exercises?: Exercise[]): FitnessData {
   const sorted = [...routine].sort((a, b) => a.time.localeCompare(b.time));
+  const dayRoutine = routineForDate({ ...data, routine: sorted }, key);
   const day = getDay(data, key);
+  const dayExercises = exercises ?? day.exercises;
   return {
-    ...data, routine: sorted, exercises,
+    ...data, routine: sorted, exercises: exercises ?? data.exercises,
     days: {
       ...data.days,
       [key]: {
-        ...day, routine: sorted, exercises,
+        ...day, routine: dayRoutine, exercises: dayExercises,
         completed: day.completed.filter((id) => sorted.some((item) => item.id === id)),
-        exerciseCompleted: day.exerciseCompleted.filter((id) => exercises.some((item) => item.id === id)),
+        exerciseCompleted: day.exerciseCompleted.filter((id) => dayExercises.some((item) => item.id === id)),
       },
     },
+  };
+}
+
+export function changeWorkoutDay(data: FitnessData, key: string, weekday: Weekday, plan: WorkoutDayPlan): FitnessData {
+  const current = upgradeFitnessData(data);
+  const next = { ...current, weeklyWorkouts: { ...current.weeklyWorkouts!, [weekday]: plan } };
+  if (weekdayFromDateKey(key) !== weekday) return next;
+  const day = getDay(current, key);
+  const routine = routineForDate(next, key);
+  return {
+    ...next,
+    days: { ...next.days, [key]: {
+      ...day,
+      routine,
+      exercises: plan.exercises,
+      exerciseCompleted: day.exerciseCompleted.filter((id) => plan.exercises.some((exercise) => exercise.id === id)),
+    } },
   };
 }
 
@@ -105,15 +180,23 @@ function exercises(value: unknown): value is Exercise[] {
     && text(item.name, 80) && numeric(item.sets, 1, 50) && Number.isInteger(item.sets) && text(item.reps, 40)
     && typeof item.load === "string" && item.load.length <= 60) && uniqueIds(value);
 }
+function weeklyWorkouts(value: unknown): value is WeeklyWorkouts {
+  if (!record(value) || Object.keys(value).length !== 7) return false;
+  return WEEKDAYS.every((weekday) => {
+    const plan = value[weekday];
+    return record(plan) && text(plan.title, 80) && (plan.kind === "strength" || plan.kind === "cardio") && exercises(plan.exercises);
+  });
+}
 
-// Used for both local storage and user-imported backups. Never trust persisted shapes.
+// Used for database data and user-imported backups. Never trust persisted shapes.
 export function isFitnessData(value: unknown): value is FitnessData {
   if (!record(value) || value.version !== 1 || !record(value.profile)) return false;
   const p = value.profile;
   if (!text(p.name, 60) || !numeric(p.waterGoal, 200, 10000) || !Number.isInteger(p.waterGoal)
     || !numeric(p.bottleMl, 100, 3000) || !Number.isInteger(p.bottleMl)
     || !(p.targetKg === null || numeric(p.targetKg, 20, 500))) return false;
-  if (!routines(value.routine) || value.routine.filter((item) => item.id === WORKOUT_ID).length !== 1 || !exercises(value.exercises)) return false;
+  if (!routines(value.routine) || value.routine.filter((item) => item.id === WORKOUT_ID).length !== 1 || !exercises(value.exercises)
+    || !(value.weeklyWorkouts === undefined || weeklyWorkouts(value.weeklyWorkouts))) return false;
   if (!record(value.days) || Object.keys(value.days).length > 36500) return false;
   for (const [date, day] of Object.entries(value.days)) {
     if (!validDate(date) || !record(day) || !routines(day.routine) || !exercises(day.exercises)
