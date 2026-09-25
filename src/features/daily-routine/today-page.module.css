@@ -1,0 +1,82 @@
+.page { max-width: 560px; min-height: 100dvh; margin: auto; padding: max(28px, env(safe-area-inset-top)) 22px calc(116px + env(safe-area-inset-bottom)); color: #253e35; background: #f8f9f4; }
+.header { padding: 0 2px 25px; }
+.eyebrow { display: flex; justify-content: space-between; align-items: center; color: #6c8373; }
+.eyebrow span { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 750; letter-spacing: .18em; }
+.eyebrow > svg { color: #ae7a3d; }
+.date { margin: 24px 0 8px; font-size: 12px; color: #707e73; }
+.header h1 { font-size: clamp(25px, 6.9vw, 32px); line-height: 1.25; letter-spacing: -.055em; font-weight: 750; overflow-wrap: anywhere; }
+.wave { display: inline-block; font-size: .85em; margin-left: 3px; }
+.subtitle { margin-top: 8px; color: #6c7b70; font-size: 15px; }
+.summary { display: grid; grid-template-columns: 1.15fr 1fr 1fr; padding: 17px 10px; border: 1px solid #e5e9de; border-radius: 23px; background: #f0f2e9; }
+.summary > div { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 0 4px; }
+.summary > div + div { border-left: 1px solid #dce2d5; }
+.summary svg { width: 21px; height: 21px; margin-bottom: 2px; }
+.summary span { font-size: 10px; color: #667269; }
+.summary strong { font-size: 13px; font-weight: 700; }
+.summary small { font-size: 10px; font-weight: 500; margin-left: 2px; }
+.rhythm { color: #aa623a; } .workout { color: #736098; } .hydration { color: #387b99; }
+.routine { margin-top: 32px; }
+.sectionHeading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.kicker { font-size: 9px; letter-spacing: .16em; font-weight: 700; color: #819080; margin-bottom: 5px; }
+.sectionHeading h2 { font-size: 25px; letter-spacing: -.045em; font-weight: 750; }
+.timeline { list-style: none; padding: 0; margin: 0; }
+.timelineItem { --accent: #47795c; --tint: #e8efe3; position: relative; padding: 0 0 12px 39px; }
+.timelineItem:not(:last-child)::before { content: ""; position: absolute; left: 14px; top: 25px; bottom: -15px; width: 1px; background: #dce4d6; }
+.training { --accent: #79659c; --tint: #ece8f5; }
+.marker { position: absolute; left: 0; top: 17px; width: 29px; height: 29px; display: grid; place-items: center; border-radius: 50%; color: var(--accent); background: var(--tint); border: 4px solid #f8f9f4; box-sizing: content-box; margin-left: -4px; }
+.routineLabel { display: flex; align-items: center; gap: 8px; padding: 15px 0 17px 9px; border-bottom: 1px solid #e8ece3; cursor: pointer; border-radius: 3px; transition: background .2s; }
+.next .routineLabel { padding: 15px 10px 17px 15px; background: var(--tint); border: 1px solid #dce5d5; border-radius: 19px; box-shadow: 0 3px 8px #354c2603; }
+.next.training .routineLabel { border-color: #ddd5eb; }
+.itemContent { flex: 1; min-width: 0; }
+.itemMeta { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; margin-bottom: 6px; font-size: 11px; font-weight: 650; color: var(--accent); font-variant-numeric: tabular-nums; }
+.nextBadge { background: #f8fbf3; border-radius: 6px; padding: 2px 6px; font-size: 9px; }
+.itemTitle { display: block; font-size: 15px; line-height: 1.45; letter-spacing: -.025em; font-weight: 650; }
+.entries { display: block; margin-top: 4px; color: #738073; font-size: 12px; line-height: 1.75; }
+.checkboxWrap { flex: 0 0 44px; height: 44px; position: relative; display: grid; place-items: center; }
+.checkboxWrap input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 1; }
+.checkboxFace { width: 24px; height: 24px; border: 1.5px solid #bccbb8; border-radius: 9px; display: grid; place-items: center; background: #ffffff70; transition: transform .2s, background .2s, border-color .2s; }
+.checkboxFace svg { opacity: 0; transform: scale(.6); transition: opacity .2s, transform .2s; }
+.checkboxWrap input:checked + .checkboxFace { background: var(--accent); border-color: var(--accent); color: white; }
+.checkboxWrap input:checked + .checkboxFace svg { opacity: 1; transform: scale(1); }
+.checkboxWrap input:focus-visible + .checkboxFace { outline: 3px solid var(--accent); outline-offset: 4px; }
+.checkboxWrap input:active + .checkboxFace { transform: scale(.9); }
+.completed .itemTitle { color: #7e8a7f; text-decoration: line-through; text-decoration-color: #bac5b7; }
+.doneText { font-size: 10px; font-weight: 500; }
+.allDone { padding: 10px; font-size: 13px; color: #47795c; }
+.water { margin-top: 27px; padding: 22px; border: 1px solid #dce9ec; border-radius: 25px; background: #eaf3f5; box-shadow: none; color: #2e586a; }
+.waterHeading { display: flex; align-items: center; gap: 10px; }
+.waterIcon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 14px; background: #dbecef; color: #3b819c; }
+.waterHeading h2 { font-size: 15px; font-weight: 700; letter-spacing: -.02em; }
+.waterHeading p { margin-top: 3px; font-size: 11px; color: #658390; }
+.waves { margin-left: auto; color: #8db5c1; flex-shrink: 0; }
+.waterNumbers { margin: 21px 0 13px; }
+.waterNumbers strong { font-size: 27px; letter-spacing: -.04em; }
+.waterNumbers strong span { font-size: 14px; font-weight: 450; color: #6e8b99; letter-spacing: 0; }
+.waterNumbers p { margin-top: 3px; font-size: 11px; color: #658390; }
+.waterTrack { height: 8px; background: #d4e5e9; border-radius: 10px; overflow: hidden; }
+.waterTrack > span { display: block; height: 100%; border-radius: inherit; background: #68a6ba; transition: width .4s ease; }
+.bottleRow { display: flex; align-items: center; gap: 9px; margin: 22px 0 20px; }
+.bottle { position: relative; width: 18px; height: 31px; border: 1.5px solid #81abba; border-radius: 5px 5px 6px 6px; padding: 2px; background: #ffffff50; }
+.bottle::before { content: ""; position: absolute; width: 8px; height: 5px; border-radius: 2px 2px 0 0; background: #81abba; left: 3.5px; top: -5px; }
+.bottle > span { position: absolute; bottom: 0; left: 0; right: 0; max-height: 100%; border-radius: 3px; background: #81b9cd; transition: height .4s ease; }
+.bottleRow p { margin-left: auto; color: #658390; font-size: 10px; }
+.bottleRow strong { display: block; color: #3f6b7c; font-size: 11px; margin-top: 3px; }
+.waterButton { width: 100%; min-height: 46px; display: flex; justify-content: center; align-items: center; gap: 7px; border-radius: 14px; background: #386f84; color: #fff; font-size: 12px; font-weight: 650; cursor: pointer; transition: background .2s, transform .2s; }
+.waterButton:active { transform: scale(.98); }
+.waterButton:focus-visible { outline: 3px solid #386f84; outline-offset: 4px; }
+.waterButton:disabled { background: #d4e5e9; color: #416575; cursor: default; }
+.weight { display: flex; align-items: center; gap: 12px; margin: 21px 0; padding: 16px 3px; }
+.weightIcon { display: grid; place-items: center; width: 43px; height: 43px; border-radius: 15px; color: #b0784d; background: #f5eadd; }
+.weight h2 { font-size: 13px; font-weight: 650; }
+.weight p { font-size: 10px; color: #899083; margin-top: 4px; }
+.weight > strong { margin-left: auto; font-size: 23px; font-weight: 650; letter-spacing: -.03em; }
+.weight small { font-size: 12px; font-weight: 400; color: #7f8a7e; }
+.footer { text-align: center; font-size: 10px; color: #889381; }
+@media (hover: hover) { .routineLabel:hover { background: #eef2e8; } .waterButton:not(:disabled):hover { background: #295e73; } }
+@media (min-width: 600px) { .page { padding-left: 34px; padding-right: 34px; } }
+@media (prefers-reduced-motion: reduce) { .page *, .page *::before { transition: none !important; } }
+.waterActions { display: flex; gap: 10px; }
+.waterUndo { flex: 0 0 46px; min-height: 46px; border: 1px solid #9fc2ce; border-radius: 14px; font-size: 22px; cursor: pointer; }
+.waterUndo:disabled { opacity: .4; cursor: default; }
+.waterUndo:focus-visible { outline: 3px solid #386f84; outline-offset: 3px; }
+.waterSuccess { margin-top: 12px; font-size: 12px; text-align: center; }
