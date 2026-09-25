@@ -1,15 +1,16 @@
-.manager { padding: 16px 0 20px; margin-bottom: 8px; border-bottom: 1px solid #e2e8da; }
-.heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; color: #42694e; }
-.heading h2 { color: #253e35; }
-.heading p { margin-top: 4px; color: #77836f; font-size: 11px; line-height: 1.5; }
-.controls, .newProfile { display: flex; align-items: flex-end; gap: 8px; }
-.controls label, .newProfile label { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 6px; margin: 0; color: #586e5e; font-size: 11px; font-weight: 550; }
-.controls select, .newProfile input { width: 100%; min-width: 0; height: 42px; border: 1px solid #d8e1d1; border-radius: 8px; padding: 8px 10px; color: #2b4435; background: #fbfcf8; font: inherit; font-size: 15px; }
-.controls select { padding-right: 30px; }
-.iconButton, .createButton { display: inline-grid; place-items: center; flex-shrink: 0; width: 42px; height: 42px; border-radius: 8px; cursor: pointer; }
-.iconButton { color: #42694e; background: #edf1e7; border: 1px solid #dde4d5; }
+.manager { position: relative; margin-left: auto; }
+.trigger, .addButton, .createButton { display: inline-grid; place-items: center; flex-shrink: 0; width: 42px; height: 42px; border-radius: 8px; cursor: pointer; }
+.trigger { color: #42694e; background: #edf1e7; border: 1px solid #dde4d5; }
+.panel { position: absolute; z-index: 20; top: 50px; right: 0; width: min(290px, calc(100vw - 44px)); padding: 16px; border: 1px solid #dce4d6; border-radius: 8px; background: #fffef9; box-shadow: 0 12px 30px #253e351f; }
+.panelHeading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.panelHeading h3 { color: #253e35; font-size: 14px; }
+.panelHeading p { margin-top: 3px; color: #77836f; font-size: 10px; }
+.addButton { color: #42694e; background: #edf1e7; }
+.panel label, .newProfile label { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 6px; margin: 0; color: #586e5e; font-size: 11px; font-weight: 550; }
+.panel select, .newProfile input { width: 100%; min-width: 0; height: 42px; border: 1px solid #d8e1d1; border-radius: 8px; padding: 8px 10px; color: #2b4435; background: #fbfcf8; font: inherit; font-size: 15px; }
+.panel select { padding-right: 30px; }
+.newProfile { display: flex; align-items: flex-end; gap: 8px; margin-top: 12px; }
 .createButton { color: white; background: #42694e; }
-.newProfile { margin-top: 12px; }
 .createButton:disabled { cursor: default; opacity: .5; }
 .manager :is(button, input, select):focus-visible { outline: 3px solid #42694e; outline-offset: 2px; }
-@media (hover: hover) { .iconButton:hover { background: #e3eadc; } }
+@media (hover: hover) { .trigger:hover, .addButton:hover { background: #e3eadc; } }
