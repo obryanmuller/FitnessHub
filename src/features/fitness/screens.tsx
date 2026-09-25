@@ -4,6 +4,7 @@ import { useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Check, Download, Dumbbell, Flame, Leaf, Pencil, Plus, Scale, Trash2, Upload, Utensils } from "lucide-react";
 import { changeDay, changePlan, dayKey, getDay, isFitnessData, streak, toggleId, WORKOUT_ID, type Exercise, type FitnessData, type Routine } from "./model";
 import { saveFitness, useFitness } from "./store";
+import { ProfileManager } from "./profile-manager";
 import styles from "./fitness.module.css";
 
 const createId = () => Array.from(crypto.getRandomValues(new Uint8Array(16)), (byte) => byte.toString(16).padStart(2, "0")).join("");
@@ -128,6 +129,7 @@ export function ProfilePage() {
   }
   return <main className={styles.page}>
     <Heading eyebrow="DO SEU JEITO" title="Seu perfil" description="Pequenos ajustes para uma rotina que combina com você." icon={<Leaf size={22} aria-hidden="true" />} />
+    <ProfileManager />
     <div className={styles.identity}><span>{data.profile.name.slice(0, 1).toLocaleUpperCase("pt-BR")}</span><div><h2>{data.profile.name}</h2><p>Um dia de cada vez.</p></div></div>
     <form key={JSON.stringify(data.profile)} className={styles.form} onSubmit={submit}><label>Como você quer ser chamado?<input name="name" defaultValue={data.profile.name} maxLength={60} required autoComplete="given-name" /></label><div className={styles.fieldGrid}><label>Meta de água (ml)<input type="number" name="waterGoal" min={200} max={10000} step={1} defaultValue={data.profile.waterGoal} required /></label><label>Sua garrafa (ml)<input type="number" name="bottleMl" min={100} max={3000} step={1} defaultValue={data.profile.bottleMl} required /></label></div><label>Meta de peso (kg, opcional)<input name="targetKg" type="number" min={20} max={500} step="0.1" defaultValue={data.profile.targetKg ?? ""} placeholder="Sua meta pessoal" /></label><p className={styles.hint}>A meta de água muda a partir de hoje. O consumo já registrado é mantido.</p><button className={styles.primary} type="submit"><Check size={17} /> Salvar perfil</button></form>
     <Notice>{notice}</Notice>
