@@ -92,6 +92,7 @@
 .footnote { margin-top: 32px; text-align: center; font-size: 10px; color: #86927d; }
 .error { max-width: 560px; margin: auto; padding: 17px 22px; background: #f8e9df; font-size: 12px; line-height: 1.7; color: #863a28; }
 .error button { text-decoration: underline; font-weight: 650; display: block; min-height: 44px; cursor: pointer; }
+.syncStatus { position: fixed; z-index: 8; bottom: calc(86px + env(safe-area-inset-bottom)); right: 12px; display: flex; align-items: center; gap: 5px; max-width: calc(100vw - 32px); padding: 5px 8px; border: 1px solid #dfe5da; border-radius: 7px; color: #697568; background: #f8f9f4e8; backdrop-filter: blur(8px); font-size: 9px; }
 @media (hover: hover) { .page button:hover { opacity: .8; } .iconButton:hover { background: #edf1e7; } }
 @media (min-width: 600px) { .page { padding-left: 34px; padding-right: 34px; } }
 @media (max-width: 350px) { .fieldGrid { grid-template-columns: minmax(0, 1fr); gap: 0; } .page { padding-left: 17px; padding-right: 17px; } }

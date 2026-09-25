@@ -5,12 +5,20 @@
 .dayTabs .activeDay span { color: #fff; }
 .planHeading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .planHeading h2 { margin-top: 8px; font-size: 23px; }
+.headingActions, .itemActions, .orderRow { display: flex; align-items: center; gap: 2px; }
 .kind { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .kind span { display: inline-flex; align-items: center; gap: 6px; }
 .kind button { min-height: 40px; color: #74618f; font-size: 11px; text-decoration: underline; }
 .exerciseInfo { flex: 1; min-width: 0; }
 .exerciseInfo strong { display: block; color: #344a3d; font-size: 14px; overflow-wrap: anywhere; }
 .exerciseInfo small { display: block; margin-top: 6px; color: #7c8175; font-size: 11px; line-height: 1.6; overflow-wrap: anywhere; }
+.performance { color: #74618f !important; }
+.performance b { display: inline-flex; align-items: center; gap: 3px; margin-left: 7px; color: #9a642f; font-weight: 650; }
+.itemActions { flex-shrink: 0; }
+.orderRow { justify-content: flex-end; margin-top: 3px; }
+.orderRow button { width: 38px; height: 38px; }
 @media (max-width: 380px) { .dayTabs { grid-template-columns: repeat(7, 44px); } }
 
 .planForm select { width: 100%; min-height: 46px; border: 1px solid #d8e1d1; border-radius: 8px; padding: 10px 12px; color: #2b4435; background: #fbfcf8; font: inherit; font-size: 16px; }
+.planForm input[type="time"] { color-scheme: light; }
+@media (max-width: 380px) { .itemActions { flex-direction: column; } }

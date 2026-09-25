@@ -54,9 +54,11 @@ function reminders(row: SubscriptionRow): Reminder[] {
   const result: Reminder[] = [];
   for (const item of row.data.routine) {
     const workout = item.id === WORKOUT_ID;
-    if (due(now.minutes, item.time) && ((workout && settings.workout) || (!workout && settings.meals))) {
-      const plan = workout ? workoutPlanForDate(row.data, now.date) : undefined;
-      result.push(routineReminder(now.date, item, workout, plan));
+    const plan = workout ? workoutPlanForDate(row.data, now.date) : undefined;
+    if (workout && plan?.kind === "rest") continue;
+    const scheduledItem = workout && plan?.time ? { ...item, time: plan.time } : item;
+    if (due(now.minutes, scheduledItem.time) && ((workout && settings.workout) || (!workout && settings.meals))) {
+      result.push(routineReminder(now.date, scheduledItem, workout, plan));
     }
   }
   if (settings.water && now.minutes >= 8 * 60 && now.minutes <= 20 * 60 && (now.minutes - 8 * 60) % 120 < 10) {

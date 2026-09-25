@@ -19,7 +19,7 @@ function harness({ legacy = null, profiles: seed = [] } = {}) {
   let failWrites = false;
   let sequence = seed.length;
   const events = new Map(), timers = new Set(), unsubscribes = [];
-  const localStorage = { getItem: (key) => local.get(key) ?? null, setItem: (key, value) => local.set(key, value) };
+  const localStorage = { getItem: (key) => local.get(key) ?? null, setItem: (key, value) => local.set(key, value), removeItem: (key) => local.delete(key) };
   const response = (status, body) => ({ ok: status >= 200 && status < 300, json: async () => clone(body) });
   const fetch = async (url, init = {}) => {
     const method = init.method ?? 'GET';
@@ -64,7 +64,7 @@ function harness({ legacy = null, profiles: seed = [] } = {}) {
   const settle = async () => {
     for (let index = 0; index < 5; index++) await new Promise((resolve) => setImmediate(resolve));
   };
-  return { ...mod.exports, snapshot: () => getter(), database, local, events, timers, unsubscribes, settle, failWrites: () => { failWrites = true; } };
+  return { ...mod.exports, snapshot: () => getter(), database, local, events, timers, unsubscribes, settle, failWrites: () => { failWrites = true; }, recoverWrites: () => { failWrites = false; } };
 }
 
 test('first cloud profile imports valid legacy browser data', async () => {
@@ -101,15 +101,21 @@ test('profiles can be created and switched without sharing their records', async
   assert.equal(app.snapshot().profiles.length, 2);
 });
 
-test('a failed cloud write keeps the optimistic data and reports the failure', async () => {
+test('a failed cloud write stays available offline and syncs after reconnection', async () => {
   const app = harness();
   await app.settle();
   app.failWrites();
   assert.equal(app.saveFitness((data) => ({ ...data, profile: { ...data.profile, bottleMl: 900 } })), true);
   await app.settle();
   assert.equal(app.snapshot().data.profile.bottleMl, 900);
-  assert.match(app.snapshot().error, /Banco indisponível/);
+  assert.equal(app.snapshot().syncStatus, 'offline');
+  assert.ok(app.local.has('fitnesshub.outbox.v1'));
   assert.equal([...app.database.values()][0].profile.bottleMl, 800);
+  app.recoverWrites();
+  await app.events.get('online')();
+  await app.settle();
+  assert.equal([...app.database.values()][0].profile.bottleMl, 900);
+  assert.equal(app.snapshot().syncStatus, 'saved');
 });
 
 test('store listeners stay active until the final screen subscriber leaves', async () => {

@@ -4,7 +4,7 @@ import { Check, Droplets, Dumbbell, Flame, Leaf, Plus, Scale, Sun, Utensils, Wav
 import { Card } from "@/components/ui/card";
 import { StatusPill } from "@/components/ui/status-pill";
 import { useFitness, saveFitness } from "@/features/fitness/store";
-import { changeDay, dayKey, getDay, streak, toggleId, WORKOUT_ID, type Routine } from "@/features/fitness/model";
+import { changeDay, dayKey, getDay, streak, toggleId, workoutPlanForDate, WORKOUT_ID, type Routine } from "@/features/fitness/model";
 import { formatDateLong } from "@/lib/date";
 import styles from "./today-page.module.css";
 
@@ -21,6 +21,7 @@ export function TodayPage() {
   const waterGoal = day.waterGoal;
   const waterProgress = Math.min(100, Math.round(waterConsumedMl / waterGoal * 100));
   const workoutDone = completedItems.has(WORKOUT_ID);
+  const restDay = workoutPlanForDate(data, today).kind === "rest";
   const nextItem = day.routine.find((item) => !completedItems.has(item.id));
   const currentDate = formatDateLong(new Date(today + "T12:00:00"));
   const daysInRow = streak(data, today);
@@ -43,7 +44,7 @@ export function TodayPage() {
 
       <section className={styles.summary} aria-label="Resumo do dia">
         <div className={styles.rhythm}><Flame aria-hidden="true" /><span>Sequência</span><strong>{daysInRow} <small>{daysInRow === 1 ? "dia" : "dias"}</small></strong></div>
-        <div className={styles.workout}><Dumbbell aria-hidden="true" /><span>Treino</span><strong>{workoutDone ? "Feito!" : "Pendente"}</strong></div>
+        <div className={styles.workout}><Dumbbell aria-hidden="true" /><span>Treino</span><strong>{restDay ? "Descanso" : workoutDone ? "Feito!" : "Pendente"}</strong></div>
         <div className={styles.hydration}><Droplets aria-hidden="true" /><span>Água</span><strong>{waterProgress}<small>% da meta</small></strong></div>
       </section>
 

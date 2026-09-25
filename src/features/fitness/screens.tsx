@@ -6,6 +6,7 @@ import { changeDay, changePlan, dayKey, isFitnessData, streak, workoutExerciseCo
 import { saveFitness, useFitness } from "./store";
 import { ProfileManager } from "./profile-manager";
 import { NotificationSettings } from "./notification-settings";
+import { WeeklyInsights } from "./weekly-insights";
 import styles from "./fitness.module.css";
 
 export { Workouts } from "./workouts";
@@ -71,6 +72,7 @@ export function Progress() {
   return <main className={`${styles.page} ${styles.orange}`}>
     <Heading eyebrow="CADA PASSO CONTA" title="Seu progresso" description="Uma visão do caminho que você está construindo." icon={<Scale size={22} aria-hidden="true" />} />
     <div className={styles.stats}><div><Flame size={20} aria-hidden="true" /><strong>{streak(data, today)} dias</strong><span>de rotina completa</span></div><div><Dumbbell size={20} aria-hidden="true" /><strong>{history.filter(([, day]) => day.completed.includes(WORKOUT_ID)).length} treinos</strong><span>concluídos</span></div></div>
+    <WeeklyInsights />
     <section className={styles.hero}><div className={styles.sectionHeading}><h2>Evolução do peso</h2>{last && <span className={styles.tag}>{dateLabel(last.date)}</span>}</div><p className={styles.bigNumber}>{last ? <>{number(last.kg)} <small>kg</small></> : "—"}</p><p>{data.profile.targetKg ? `Sua meta: ${number(data.profile.targetKg)} kg` : "Você pode definir uma meta no Perfil."}</p>{chartWeights.length > 0 ? <><svg className={styles.chart} viewBox="0 0 320 154" role="img" aria-label={`Últimos ${chartWeights.length} registros de peso, de ${number(chartWeights[0].kg)} a ${number(chartWeights.at(-1)!.kg)} kg. Valores detalhados na lista abaixo.`}><path d="M24 128H296 M24 76H296 M24 24H296" stroke="currentColor" opacity=".12" fill="none" /><polyline points={points.join(" ")} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round" />{points.map((point, i) => { const [cx, cy] = point.split(","); return <circle key={chartWeights[i].date} cx={cx} cy={cy} r="4" fill="currentColor" />; })}</svg><div className={styles.chartLabels}><span>{dateLabel(chartWeights[0].date)}</span><span>{dateLabel(chartWeights.at(-1)!.date)}</span></div><p className={styles.hint}>Últimos {chartWeights.length} registros · cada ponto é uma pesagem</p></> : <p className={styles.emptyInline}>Registre seu primeiro peso para começar a acompanhar.</p>}</section>
     <form className={styles.form} onSubmit={submit}><h2>Registrar peso</h2><div className={styles.fieldGrid}><label>Peso (kg)<input name="kg" type="number" min={20} max={500} step="0.1" placeholder="Ex.: 105" required /></label><label>Data<input type="date" name="date" min="1900-01-01" max={today} defaultValue={today} required /></label></div><p className={styles.hint}>Um registro por dia. Salvar na mesma data atualiza o peso anterior.</p><button className={styles.primary} type="submit"><Plus size={17} /> Registrar peso</button></form>
     <Notice>{notice}</Notice>
