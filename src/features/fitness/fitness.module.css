@@ -71,6 +71,9 @@
 .hero .bigNumber { font-size: 36px; font-weight: 650; color: #344a3d; letter-spacing: -.04em; }
 .bigNumber small { font-size: 15px; font-weight: 400; }
 .chart { width: 100%; color: var(--accent); overflow: visible; margin-top: 12px; }
+.targetLine { color: #4f7658; }
+.targetLine line { stroke: currentColor; stroke-width: 1.5; stroke-dasharray: 5 4; }
+.targetLine text { fill: currentColor; font-size: 9px; font-weight: 650; }
 .chartLabels { display: flex; justify-content: space-between; font-size: 9px; color: #887e6c; }
 .details { margin: 25px 0; }
 .details summary { font-size: 14px; font-weight: 650; padding: 12px 0; }

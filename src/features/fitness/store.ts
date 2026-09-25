@@ -114,7 +114,7 @@ async function flushOutbox() {
       if (snapshot.activeProfileId === profileId) snapshot = { ...snapshot, profiles: snapshot.profiles.map((profile) => profile.id === profileId ? { ...profile, name: data.profile.name, updatedAt: result.updatedAt } : profile) };
     }
     snapshot = { ...snapshot, error: "", syncStatus: "saved" }; emit();
-  } catch (error) {
+  } catch {
     snapshot = { ...snapshot, error: "", syncStatus: "offline" }; emit();
   }
 }

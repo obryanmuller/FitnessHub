@@ -36,10 +36,22 @@ export function TodayPage() {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <div className={styles.eyebrow}><span><Leaf size={15} aria-hidden="true" /> FITNESSHUB</span><Sun size={22} aria-hidden="true" /></div>
+        <div className={styles.eyebrow}>
+          <span>
+            <Leaf size={15} aria-hidden="true" />
+            FITNESSHUB
+          </span>
+
+          <Sun size={22} aria-hidden="true" />
+        </div>
+
         <p className={styles.date}>{currentDate}</p>
-        <h1>Bom dia, {data.profile.name} <span className={styles.wave}>👋</span></h1>
-        <p className={styles.subtitle}>Vamos cuidar de você hoje?</p>
+
+        <h1>Visão geral</h1>
+
+        <p className={styles.subtitle}>
+          Sua rotina e progresso em um só lugar.
+        </p>
       </header>
 
       <section className={styles.summary} aria-label="Resumo do dia">
