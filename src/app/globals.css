@@ -2,6 +2,8 @@
 
 :root {
   color-scheme: light;
+  --radius-card: 10px;
+  --radius-control: 8px;
   --background: #f1f0ea;
   --foreground: #29312e;
   --ink: #29312e;

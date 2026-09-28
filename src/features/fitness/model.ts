@@ -317,3 +317,21 @@ export function isFitnessData(value: unknown): value is FitnessData {
     record(item) && validDate(item.date) && numeric(item.kg, 20, 500))
     && new Set(value.weights.map((item) => item.date)).size === value.weights.length;
 }
+
+/** Compare equal portions of consecutive weeks, without treating absent records as successes. */
+export function weeklyComparison(data: FitnessData, today: string) {
+  const priorDate = new Date(today + "T12:00:00");
+  priorDate.setDate(priorDate.getDate() - 7);
+  const current = weeklySummary(data, today);
+  const previous = weeklySummary(data, dayKey(priorDate));
+  const coverage = (summary: WeeklySummary) => Object.entries(data.days).filter(([date]) => date >= summary.start && date <= summary.end);
+  const currentDays = coverage(current);
+  const previousDays = coverage(previous);
+  return {
+    current, previous,
+    currentRecorded: currentDays.length,
+    previousRecorded: previousDays.length,
+    currentWaterGoals: currentDays.filter(([, day]) => day.waterMl >= day.waterGoal).length,
+    previousWaterGoals: previousDays.filter(([, day]) => day.waterMl >= day.waterGoal).length,
+  };
+}

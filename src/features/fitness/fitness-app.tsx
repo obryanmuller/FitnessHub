@@ -7,6 +7,7 @@ import { TodayPage } from "@/features/daily-routine/today-page";
 import { Meals, Workouts, Progress, ProfilePage } from "./screens";
 import { retryStorage, useFitness } from "./store";
 import type { NavigationItem } from "@/types/navigation";
+import { RestTimerProvider } from "./rest-timer";
 import styles from "./fitness.module.css";
 
 const navigation: NavigationItem[] = [
@@ -23,7 +24,7 @@ function subscribeHash(listener: () => void) {
 function getHash() { return navigation.some((item) => item.href === location.hash) ? location.hash : "#hoje"; }
 
 export function FitnessApp() {
-  const { ready, error, today, data, syncStatus } = useFitness();
+  const { ready, error, today, data, syncStatus, activeProfileId } = useFitness();
   const tab = useSyncExternalStore(subscribeHash, getHash, () => "#hoje");
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -32,11 +33,11 @@ export function FitnessApp() {
   }, [data.profile.name, tab]);
   if (!ready) return <main className={styles.page}><Activity aria-hidden="true" /><h1>Seu dia começa aqui.</h1><p role="status">Abrindo seus registros…</p></main>;
   return (
-    <div className={styles.app}>
+    <RestTimerProvider key={activeProfileId}><div className={styles.app}>
       {error && <div role="alert" className={styles.error}>{error}<button type="button" onClick={() => void retryStorage()}>Tentar novamente</button></div>}
       {syncStatus !== "saved" && <div className={styles.syncStatus} role="status" aria-live="polite">{syncStatus === "offline" ? <><CloudOff size={14} /> Offline · sincroniza depois</> : <><RefreshCw size={14} /> Salvando</>}</div>}
       {tab === "#hoje" ? <TodayPage /> : tab === "#alimentacao" ? <Meals /> : tab === "#treinos" ? <Workouts /> : tab === "#progresso" ? <Progress key={today} /> : <ProfilePage />}
       <BottomNavigation items={navigation.map((item) => ({ ...item, active: item.href === tab }))} />
-    </div>
+    </div></RestTimerProvider>
   );
 }

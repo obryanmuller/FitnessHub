@@ -50,3 +50,30 @@ test('weekly summary counts planned/completed workouts and earned achievements',
   assert.equal(summary.routinePercent, 100);
   assert.equal(model.achievements(data, '2026-09-21').some((item) => item.id === 'first-workout'), true);
 });
+
+test('weekly comparison uses equal weekday windows and each historical water goal', () => {
+  let data = model.initialData(routine);
+  data = model.changeDay(data, '2026-09-21', day => ({ ...day, waterGoal: 1500, waterMl: 1500, completed: [model.WORKOUT_ID] }));
+  data = model.changeDay(data, '2026-09-22', day => ({ ...day, waterGoal: 2000, waterMl: 1000 }));
+  data = model.changeDay(data, '2026-09-28', day => ({ ...day, waterGoal: 2500, waterMl: 2500 }));
+  const result = model.weeklyComparison(data, '2026-09-28');
+  assert.equal(result.previous.end, '2026-09-21');
+  assert.equal(result.previousRecorded, 1);
+  assert.equal(result.previous.averageWaterMl, 1500);
+  assert.equal(result.currentWaterGoals, 1);
+  assert.equal(result.previousWaterGoals, 1);
+  assert.equal(result.currentRecorded, 1);
+});
+
+test('historical correction preserves plan, exercise logs and neighboring days', () => {
+  let data = model.initialData(routine);
+  data = model.changeDay(data, '2026-09-21', day => ({ ...day, waterMl: 500 }));
+  data = model.changeDay(data, '2026-09-28', day => ({ ...day, waterMl: 900 }));
+  const previous = data.days['2026-09-21'];
+  const corrected = model.changeDay(data, '2026-09-21', day => ({ ...day, waterMl: 1200, completed: [day.routine[0].id] }));
+  assert.deepEqual(corrected.days['2026-09-21'].routine, previous.routine);
+  assert.deepEqual(corrected.days['2026-09-21'].exerciseLogs, previous.exerciseLogs);
+  assert.equal(corrected.days['2026-09-28'].waterMl, 900);
+  assert.equal(data.days['2026-09-21'].waterMl, 500);
+  assert.ok(model.isFitnessData(corrected));
+});

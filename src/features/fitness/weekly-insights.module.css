@@ -1,20 +1,28 @@
 .section { margin: 30px 0; }
 .heading { display: flex; align-items: center; justify-content: space-between; color: #a7683c; }
 .heading span { display: block; margin-bottom: 5px; color: #899080; font-size: 9px; font-weight: 700; letter-spacing: .14em; }
-.heading h2 { color: #29312e; font-size: 18px; }
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin-top: 16px; border: 1px solid #e3e7dc; background: #e3e7dc; }
-.grid > div { min-width: 0; padding: 16px; color: #a7683c; background: #f1f0ea; }
+.heading h2 { color: var(--ink); font-size: 18px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; margin-top: 16px; }
+.grid > div { min-width: 0; color: #a7683c; }
 .grid strong, .grid span { display: block; overflow-wrap: anywhere; }
-.grid strong { margin-top: 12px; color: #29312e; font-size: 18px; }
+.grid strong { margin-top: 12px; }
 .grid span { margin-top: 4px; color: #7b8476; font-size: 10px; }
 .achievements { margin: 15px 0 0; padding: 0; list-style: none; }
 .achievements li { display: flex; align-items: center; gap: 12px; padding: 13px 0; border-top: 1px solid #e2e7dc; color: #a7683c; }
 .achievements strong, .achievements span { display: block; }
-.achievements strong { color: #29312e; font-size: 13px; }
+.achievements strong { color: var(--ink); font-size: 13px; }
 .achievements span, .empty { margin-top: 3px; color: #7b8476; font-size: 11px; line-height: 1.6; }
 .empty { padding: 17px 0; border-top: 1px solid #e2e7dc; }
 
 .grid { gap: 12px; border: 0; background: transparent; }
-.grid > div { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 22px; }
+.grid > div { border: 1px solid var(--line); border-radius: var(--radius-card); background: var(--surface); padding: 22px; }
 .grid strong { font-size: 24px; color: var(--ink); }
 .grid span, .achievements span { color: var(--muted); font-size: 12px; }
+
+.comparisonWrap { overflow-x: auto; }
+.comparison { width: 100%; border-collapse: collapse; background: var(--surface); font-size: 13px; }
+.comparison caption { text-align: left; font-size: 12px; line-height: 1.7; color: var(--muted); padding: 12px 0; }
+.comparison th, .comparison td { padding: 12px 8px; text-align: left; border-bottom: 1px solid var(--line); }
+.comparison thead th { color: var(--accent); }
+.comparison tbody th { font-weight: 500; }
+.comparison td { font-variant-numeric: tabular-nums; }

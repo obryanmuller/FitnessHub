@@ -6,6 +6,7 @@ import { changeDay, changePlan, dayKey, isFitnessData, streak, workoutExerciseCo
 import { saveFitness, useFitness } from "./store";
 import { ProfileManager } from "./profile-manager";
 import { NotificationSettings } from "./notification-settings";
+import { HistoryEditor } from "./history-editor";
 import { WeeklyInsights } from "./weekly-insights";
 import styles from "./fitness.module.css";
 
@@ -53,7 +54,7 @@ export function Meals() {
 export function Progress() {
   const { data, today } = useFitness();
   const [notice, setNotice] = useState("");
-  const [selectedDate, setSelectedDate] = useState(today);
+
   const weights = [...data.weights].sort((a, b) => a.date.localeCompare(b.date));
   const last = weights.at(-1);
   const chartWeights = weights.slice(-14);
@@ -64,7 +65,7 @@ export function Progress() {
   const points = chartWeights.map((weight, index) => `${24 + (chartWeights.length > 1 ? index / (chartWeights.length - 1) * 272 : 136)},${chartY(weight.kg)}`);
   const targetY = data.profile.targetKg === null ? null : chartY(data.profile.targetKg);
   const history = Object.entries(data.days).filter(([date]) => date <= today).sort(([a], [b]) => b.localeCompare(a));
-  const selected = data.days[selectedDate];
+
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
@@ -80,7 +81,7 @@ export function Progress() {
     <form className={styles.form} onSubmit={submit}><h2>Registrar peso</h2><div className={styles.fieldGrid}><label>Peso (kg)<input name="kg" type="number" min={20} max={500} step="0.1" placeholder="Ex.: 105" required /></label><label>Data<input type="date" name="date" min="1900-01-01" max={today} defaultValue={today} required /></label></div><p className={styles.hint}>Um registro por dia. Salvar na mesma data atualiza o peso anterior.</p><button className={styles.primary} type="submit"><Plus size={17} /> Registrar peso</button></form>
     <Notice>{notice}</Notice>
     {weights.length > 0 && <details className={styles.details}><summary>Pesagens · {weights.length} registros</summary><ul className={styles.list}>{[...weights].reverse().map((w) => <li key={w.date}><div className={styles.row}><div className={styles.grow}><h3>{number(w.kg)} kg</h3><p>{dateLabel(w.date)}</p></div><Remove label={`peso de ${dateLabel(w.date)}`} onRemove={() => { if (saveFitness((current) => ({ ...current, weights: current.weights.filter((item) => item.date !== w.date) }))) setNotice("Registro de peso removido."); }} /></div></li>)}</ul></details>}
-    <section className={styles.history}><h2>Seu histórico diário</h2><p className={styles.hint}>Refeições, treino e água registrados em cada dia.</p><label>Consultar dia<input type="date" value={selectedDate} max={today} min="1900-01-01" onChange={(event) => setSelectedDate(event.target.value)} /></label>{selected ? <div className={styles.dayDetail}><div className={styles.sectionHeading}><strong>{dateLabel(selectedDate)}</strong><span>{selected.completed.length}/{selected.routine.length} etapas</span></div><p>Água: {number(selected.waterMl)} / {number(selected.waterGoal)} ml</p><ul>{selected.routine.map((item) => <li key={item.id}><span aria-label={selected.completed.includes(item.id) ? "Concluído" : "Não concluído"}>{selected.completed.includes(item.id) ? "✓" : "○"}</span><span>{item.time} · {item.title}</span></li>)}</ul>{selected.exercises.length > 0 && <p>{selected.exerciseCompleted.length}/{selected.exercises.length} exercícios marcados.</p>}</div> : <p className={styles.emptyInline}>Ainda não há registros nesse dia.</p>}</section>
+    <HistoryEditor />
   </main>;
 }
 

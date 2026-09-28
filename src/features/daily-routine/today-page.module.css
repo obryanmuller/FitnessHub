@@ -1,48 +1,41 @@
-.page { max-width: 560px; min-height: 100dvh; margin: auto; padding: max(28px, env(safe-area-inset-top)) 22px calc(116px + env(safe-area-inset-bottom)); color: #29312e; background: #f1f0ea; }
-.header { padding: 0 2px 25px; }
-.eyebrow { display: flex; justify-content: space-between; align-items: center; color: #6c8373; }
-.eyebrow span { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 750; letter-spacing: .18em; }
+.page { min-height: 100dvh; margin: auto; color: var(--ink); background: #f1f0ea; }
+.eyebrow { display: flex; justify-content: space-between; align-items: center; }
+.eyebrow span { display: flex; align-items: center; gap: 6px; font-weight: 750; }
 .eyebrow > svg { color: #ae7a3d; }
-.date { margin: 24px 0 8px; font-size: 12px; color: #707e73; }
-.header h1 { font-size: clamp(25px, 6.9vw, 32px); line-height: 1.25; letter-spacing: -.055em; font-weight: 750; overflow-wrap: anywhere; }
+.header h1 { overflow-wrap: anywhere; }
 .wave { display: inline-block; font-size: .85em; margin-left: 3px; }
-.subtitle { margin-top: 8px; color: #646b63; font-size: 15px; }
-.summary { display: grid; grid-template-columns: 1.15fr 1fr 1fr; padding: 17px 10px; border: 1px solid #e5e9de; border-radius: 10px; background: #eee8dc; }
-.summary > div { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 0 4px; }
-.summary > div + div { border-left: 1px solid #dce2d5; }
+.summary { display: grid; grid-template-columns: 1.15fr 1fr 1fr; }
+.summary > div { display: flex; flex-direction: column; }
 .summary svg { width: 21px; height: 21px; margin-bottom: 2px; }
-.summary span { font-size: 10px; color: #667269; }
-.summary strong { font-size: 13px; font-weight: 700; }
-.summary small { font-size: 10px; font-weight: 500; margin-left: 2px; }
+.summary strong { font-weight: 700; }
+.summary small { font-weight: 500; margin-left: 2px; }
 .rhythm { color: #aa623a; } .workout { color: #52634a; } .hydration { color: #387b99; }
-.nextAction { --next-accent: #536440; --next-tint: #e3e8d9; margin-top: 18px; padding: 18px; border: 1px solid #dce5d5; border-radius: 10px; background: var(--surface); box-shadow: none; color: var(--ink); }
+.nextAction { --next-accent: #536440; --next-tint: #e3e8d9; margin-top: 18px; padding: 18px; border: 1px solid #dce5d5; border-radius: var(--radius-card); background: var(--surface); box-shadow: none; color: var(--ink); }
 .nextActionTraining { --next-accent: #52634a; --next-tint: #e0e6db; border-color: #cfd8c8; }
 .nextActionHeading { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 11px; }
-.nextActionIcon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; color: var(--next-accent); background: var(--next-tint); }
+.nextActionIcon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: var(--radius-card); color: var(--next-accent); background: var(--next-tint); }
 .nextActionHeading p { margin-bottom: 3px; font-size: 10px; font-weight: 750; letter-spacing: .14em; color: #738073; text-transform: uppercase; }
 .nextActionHeading h2 { font-size: 20px; line-height: 1.25; font-weight: 750; overflow-wrap: anywhere; }
-.nextActionHeading time { align-self: start; padding: 7px 8px; border-radius: 10px; background: var(--next-tint); color: var(--next-accent); font-size: 11px; font-weight: 750; font-variant-numeric: tabular-nums; }
+.nextActionHeading time { align-self: start; padding: 7px 8px; border-radius: var(--radius-card); background: var(--next-tint); color: var(--next-accent); font-size: 11px; font-weight: 750; font-variant-numeric: tabular-nums; }
 .nextActionEntries { margin: 13px 0 15px; color: #6f7f72; font-size: 13px; line-height: 1.65; overflow-wrap: anywhere; }
-.nextActionButton { width: 100%; min-height: 48px; display: flex; justify-content: center; align-items: center; gap: 8px; border-radius: 10px; background: var(--next-accent); color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; transition: transform .2s, opacity .2s; }
+.nextActionButton { width: 100%; min-height: 48px; display: flex; justify-content: center; align-items: center; gap: 8px; border-radius: var(--radius-card); background: var(--next-accent); color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; transition: transform .2s, opacity .2s; }
 .nextActionButton:active { transform: scale(.98); }
 .nextActionButton:focus-visible { outline: 3px solid var(--next-accent); outline-offset: 4px; }
-.routine { margin-top: 32px; }
 .sectionHeading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
-.kicker { font-size: 9px; letter-spacing: .16em; font-weight: 700; color: #819080; margin-bottom: 5px; }
-.sectionHeading h2 { font-size: 25px; letter-spacing: -.045em; font-weight: 750; }
+.kicker { letter-spacing: .16em; font-weight: 700; margin-bottom: 5px; }
 .timeline { list-style: none; padding: 0; margin: 0; }
 .timelineItem { --accent: #727d4c; --tint: #edf0df; position: relative; padding: 0 0 12px 39px; }
 .timelineItem:not(:last-child)::before { content: ""; position: absolute; left: 14px; top: 25px; bottom: -15px; width: 1px; background: #dce4d6; }
 .training { --accent: #52634a; --tint: #e0e6db; }
 .marker { position: absolute; left: 0; top: 17px; width: 29px; height: 29px; display: grid; place-items: center; border-radius: 50%; color: var(--accent); background: var(--tint); border: 4px solid #f1f0ea; box-sizing: content-box; margin-left: -4px; }
 .routineLabel { display: flex; align-items: center; gap: 8px; padding: 15px 0 17px 9px; border-bottom: 1px solid #e8ece3; cursor: pointer; border-radius: 3px; transition: background .2s; }
-.next .routineLabel { padding: 15px 10px 17px 15px; background: var(--tint); border: 1px solid #dce5d5; border-radius: 10px; box-shadow: 0 3px 8px #354c2603; }
+.next .routineLabel { padding: 15px 10px 17px 15px; border: 1px solid #dce5d5; box-shadow: 0 3px 8px #354c2603; }
 .next.training .routineLabel { border-color: #cfd8c8; }
 .itemContent { flex: 1; min-width: 0; }
 .itemMeta { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; margin-bottom: 6px; font-size: 11px; font-weight: 650; color: var(--accent); font-variant-numeric: tabular-nums; }
 .nextBadge { background: #f8fbf3; border-radius: 6px; padding: 2px 6px; font-size: 9px; }
-.itemTitle { display: block; font-size: 15px; line-height: 1.45; letter-spacing: -.025em; font-weight: 650; }
-.entries { display: block; margin-top: 4px; color: #646b63; font-size: 12px; line-height: 1.75; }
+.itemTitle { display: block; line-height: 1.45; letter-spacing: -.025em; font-weight: 650; }
+.entries { display: block; margin-top: 4px; font-size: 12px; line-height: 1.75; }
 .checkboxWrap { flex: 0 0 44px; height: 44px; position: relative; display: grid; place-items: center; }
 .checkboxWrap input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 1; }
 .checkboxFace { width: 24px; height: 24px; border: 1.5px solid #bccbb8; border-radius: 9px; display: grid; place-items: center; background: #ffffff70; transition: transform .2s, background .2s, border-color .2s; }
@@ -54,43 +47,30 @@
 .completed .itemTitle { color: #7e8a7f; text-decoration: line-through; text-decoration-color: #bac5b7; }
 .doneText { font-size: 10px; font-weight: 500; }
 .allDone { padding: 10px; font-size: 13px; color: #727d4c; }
-.water { margin-top: 27px; padding: 22px; border: 1px solid #dce9ec; border-radius: 10px; background: #eaf3f5; box-shadow: none; color: #365166; }
+.water { margin-top: 27px; box-shadow: none; color: #365166; }
 .waterHeading { display: flex; align-items: center; gap: 10px; }
-.waterIcon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; background: #dbecef; color: #3b819c; }
-.waterHeading h2 { font-size: 15px; font-weight: 700; letter-spacing: -.02em; }
+.waterIcon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--radius-card); background: #dbecef; color: #3b819c; }
 .waterHeading p { margin-top: 3px; font-size: 11px; color: #658390; }
 .waves { margin-left: auto; color: #8db5c1; flex-shrink: 0; }
-.waterNumbers { margin: 21px 0 13px; }
-.waterNumbers strong { font-size: 27px; letter-spacing: -.04em; }
-.waterNumbers strong span { font-size: 14px; font-weight: 450; color: #6e8b99; letter-spacing: 0; }
-.waterNumbers p { margin-top: 3px; font-size: 11px; color: #658390; }
-.waterTrack { height: 8px; background: #d4e5e9; border-radius: 10px; overflow: hidden; }
-.waterTrack > span { display: block; height: 100%; border-radius: inherit; background: #63869b; transition: width .4s ease; }
-.bottleRow { display: flex; align-items: center; gap: 9px; margin: 22px 0 20px; }
-.bottle { position: relative; width: 18px; height: 31px; border: 1.5px solid #81abba; border-radius: 5px 5px 6px 6px; padding: 2px; background: #ffffff50; }
-.bottle::before { content: ""; position: absolute; width: 8px; height: 5px; border-radius: 2px 2px 0 0; background: #81abba; left: 3.5px; top: -5px; }
-.bottle > span { position: absolute; bottom: 0; left: 0; right: 0; max-height: 100%; border-radius: 3px; background: #7294a6; transition: height .4s ease; }
-.bottleRow p { margin-left: auto; color: #658390; font-size: 10px; }
-.bottleRow strong { display: block; color: #3f6b7c; font-size: 11px; margin-top: 3px; }
-.waterButton { width: 100%; min-height: 46px; display: flex; justify-content: center; align-items: center; gap: 7px; border-radius: 10px; background: #36566c; color: #fff; font-size: 12px; font-weight: 650; cursor: pointer; transition: background .2s, transform .2s; }
+.waterButton { width: 100%; display: flex; justify-content: center; align-items: center; gap: 7px; background: #36566c; color: #fff; font-size: 12px; font-weight: 650; cursor: pointer; transition: background .2s, transform .2s; }
 .waterButton:active { transform: scale(.98); }
 .waterButton:focus-visible { outline: 3px solid #36566c; outline-offset: 4px; }
 .waterButton:disabled { background: #d4e5e9; color: #416575; cursor: default; }
-.weight { display: flex; align-items: center; gap: 12px; margin: 21px 0; padding: 16px 3px; }
-.weightIcon { display: grid; place-items: center; width: 43px; height: 43px; border-radius: 10px; color: #b0784d; background: #f5eadd; }
-.weight h2 { font-size: 13px; font-weight: 650; }
+.weight { display: flex; align-items: center; gap: 12px; margin: 21px 0; }
+.weightIcon { display: grid; place-items: center; width: 43px; height: 43px; border-radius: var(--radius-card); }
+.weight h2 { font-weight: 650; }
 .weight p { font-size: 10px; color: #899083; margin-top: 4px; }
 .weight > strong { margin-left: auto; font-size: 23px; font-weight: 650; letter-spacing: -.03em; }
 .weight small { font-size: 12px; font-weight: 400; color: #7f8a7e; }
-.footer { text-align: center; font-size: 10px; color: #889381; }
+.footer { text-align: center; }
 @media (hover: hover) { .routineLabel:hover { background: #eef2e8; } .nextActionButton:hover { opacity: .86; } .waterButton:not(:disabled):hover { background: #295e73; } }
 @media (min-width: 600px) { .page { padding-left: 34px; padding-right: 34px; } }
 @media (prefers-reduced-motion: reduce) { .page *, .page *::before { transition: none !important; } }
 .waterActions { display: flex; gap: 10px; }
-.waterUndo { flex: 0 0 46px; min-height: 46px; border: 1px solid #9fc2ce; border-radius: 10px; font-size: 22px; cursor: pointer; }
+.waterUndo { flex: 0 0 46px; min-height: 46px; border: 1px solid #9fc2ce; border-radius: var(--radius-card); font-size: 22px; cursor: pointer; }
 .waterUndo:disabled { opacity: .4; cursor: default; }
 .waterUndo:focus-visible { outline: 3px solid #36566c; outline-offset: 3px; }
-.waterSuccess { display: flex; justify-content: center; align-items: center; gap: 7px; margin-top: 14px; padding: 10px; border: 1px solid #bfcdb3; border-radius: 8px; background: #e4ecdd; color: #435533; font-size: 12px; text-align: center; }
+.waterSuccess { display: flex; justify-content: center; align-items: center; gap: 7px; margin-top: 14px; padding: 10px; border: 1px solid #bfcdb3; border-radius: var(--radius-control); background: #e4ecdd; color: #435533; font-size: 12px; text-align: center; }
 
 .hydrationDisplay { display: grid; grid-template-columns: 108px minmax(0, 1fr); align-items: center; gap: 20px; margin: 28px 0 20px; }
 .bottleStage { position: relative; width: 108px; padding: 0 7px 16px; }
@@ -107,7 +87,7 @@
 .bottleGraduations { position: absolute; inset: 24px 10px 20px auto; display: flex; flex-direction: column; justify-content: space-between; }
 .bottleGraduations span { width: 12px; border-top: 2px solid #36566c70; }
 .bottleGraduations span:nth-child(even) { width: 8px; margin-left: auto; }
-.bottleEmblem { position: absolute; left: 16px; top: 76px; display: grid; place-items: center; width: 38px; height: 42px; border: 1px solid #ffffff70; border-radius: 8px; color: #36566c; background: #f3f8fac9; }
+.bottleEmblem { position: absolute; left: 16px; top: 76px; display: grid; place-items: center; width: 38px; height: 42px; border: 1px solid #ffffff70; border-radius: var(--radius-control); color: #36566c; background: #f3f8fac9; }
 .bottleShine { position: absolute; left: 8px; top: 19px; width: 5px; height: 143px; background: #ffffff55; border-radius: 9px; }
 .bottleShadow { position: absolute; bottom: 0; left: 12px; right: 12px; height: 7px; border-radius: 50%; background: #36566c20; filter: blur(2px); }
 .bubbles { position: absolute; inset: 0; overflow: hidden; }
@@ -117,7 +97,7 @@
 .bubbles i:nth-child(4) { left: 78%; animation-delay: .1s; }
 .bubbles i:nth-child(5) { left: 48%; width: 4px; height: 4px; animation-delay: .5s; }
 .bubbles i:nth-child(6) { left: 57%; width: 6px; height: 6px; animation-delay: .7s; }
-.hydrationLabel { display: block; font-size: 9px; letter-spacing: .12em; color: #506c7c; font-weight: 750; }
+.hydrationLabel { display: block; letter-spacing: .12em; color: #506c7c; font-weight: 750; }
 .hydrationReadout > strong { display: block; margin-top: 9px; font-size: clamp(26px, 3vw, 38px); line-height: 1.15; letter-spacing: -.05em; color: #29495e; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
 .hydrationReadout small { font-size: 13px; letter-spacing: 0; font-weight: 500; }
 .hydrationReadout > p { font-size: 12px; color: #506c7c; margin-top: 5px; }
@@ -146,7 +126,7 @@
 .waterSplash i:nth-child(3) { --drift: 0px; --rise: -76px; animation-delay: .06s; }
 .waterSplash i:nth-child(4) { --drift: 28px; --rise: -60px; animation-delay: .02s; }
 .waterSplash i:nth-child(5) { --drift: 49px; --rise: -38px; animation-delay: .05s; }
-.waterAdded { position: absolute; left: 50%; bottom: calc(100% + 12px); white-space: nowrap; padding: 5px 12px; background: #fcfcf8; color: #365166; border: 1px solid #b8d4dc; border-radius: 10px; font-size: 12px; box-shadow: 0 3px 10px #36516612; animation: waterAdded .95s ease-out both; }
+.waterAdded { position: absolute; left: 50%; bottom: calc(100% + 12px); white-space: nowrap; padding: 5px 12px; background: var(--surface); color: #365166; border: 1px solid #b8d4dc; border-radius: var(--radius-card); font-size: 12px; box-shadow: 0 3px 10px #36516612; animation: waterAdded .95s ease-out both; }
 @keyframes waterRipple { 0% { opacity: .8; transform: scale(.96); } 100% { opacity: 0; transform: scale(1.08, 1.4); } }
 @keyframes waterDroplet { 0% { opacity: 0; transform: translate(-50%, 0) scale(.4); } 20% { opacity: .85; } 100% { opacity: 0; transform: translate(var(--drift), var(--rise)) rotate(30deg) scale(.65); } }
 @keyframes waterAdded { 0% { opacity: 0; transform: translate(-50%, 8px); } 20%, 65% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -22px); } }
@@ -161,34 +141,30 @@
 .header h1 { font-family: var(--font-geist-sans), Arial, sans-serif; font-size: clamp(38px, 5vw, 62px); font-weight: 400; letter-spacing: -.055em; line-height: 1.08; }
 .subtitle { max-width: 380px; font-size: 13px; line-height: 1.8; color: var(--muted); margin-top: 15px; }
 .summary { gap: 10px; padding: 0; border: 0; border-radius: 0; background: transparent; }
-.summary > div { position: relative; align-items: flex-start; padding: 18px 12px; border: 1px solid #d8d9cb; border-radius: 10px; background: #e5e3d4; gap: 9px; }
+.summary > div { position: relative; align-items: flex-start; padding: 18px 12px; border: 1px solid #d8d9cb; border-radius: var(--radius-card); background: #e5e3d4; gap: 9px; }
 .summary > div + div { border-left: 1px solid #cfd8c8; }
 .summary .workout { background: #e0e6db; border-color: #cfd8c8; }
 .summary .hydration { background: #dde5e9; border-color: #cbd6de; }
 .summary span { font-size: 11px; color: #625e56; }
 .summary strong { font-size: clamp(14px, 2vw, 23px); letter-spacing: -.04em; }
 .summary small { font-size: 10px; letter-spacing: 0; }
-.routine { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px 16px 12px; margin-top: 24px; }
+.routine { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card); padding: 22px 16px 12px; margin-top: 24px; }
 .kicker { color: #827365; font-size: 9px; }
-.sectionHeading h2 { font-family: var(--font-geist-sans), Arial, sans-serif; font-size: 32px; font-weight: 400; }
+.sectionHeading h2 { font-family: var(--font-geist-sans), Arial, sans-serif; font-weight: 400; }
 .timelineItem { padding-left: 34px; }
 .marker { border-color: var(--surface); }
 .routineLabel { padding-left: 8px; border-bottom-color: #ece6dc; }
-.next .routineLabel { background: #f1eedf; border-color: #e4dfc9; border-radius: 10px; }
+.next .routineLabel { background: #f1eedf; border-color: #e4dfc9; border-radius: var(--radius-card); }
 .itemTitle { font-size: 14px; }
-.entries { color: #646b63; }
-.water { background: #dde5e9; border: 1px solid #c3d1da; border-radius: 10px; padding: 24px; }
-.waterHeading h2 { font-family: var(--font-geist-sans), Arial, sans-serif; font-size: 24px; font-weight: 400; line-height: 1.1; }
-.waterNumbers { margin-top: 32px; }
-.waterNumbers strong { font-size: 40px; font-weight: 500; }
-.waterNumbers strong span { font-size: 12px; }
+.entries { color: var(--muted); }
+.water { background: #dde5e9; border: 1px solid #c3d1da; border-radius: var(--radius-card); padding: 24px; }
+.waterHeading h2 { font-family: var(--font-geist-sans), Arial, sans-serif; font-weight: 400; line-height: 1.1; }
 .waterButton { border-radius: 11px; min-height: 48px; }
-.weight { background: #e5e3d8; padding: 22px 18px; border: 1px solid #d5d6c8; border-radius: 10px; }
+.weight { background: #e5e3d8; padding: 22px 18px; border: 1px solid #d5d6c8; border-radius: var(--radius-card); }
 .weightIcon { background: #fcfcf885; color: #536440; }
 .weight h2 { font-size: 14px; }
 .weight p, .weight small { color: #756b5c; }
-.footer { color: #646b63; font-size: 11px; line-height: 1.8; }
-.bottleRow { flex-wrap: wrap; }
+.footer { color: var(--muted); font-size: 11px; line-height: 1.8; }
 .summary > div { border-top: 3px solid #8b8664; }
 .summary .workout { border-top: 3px solid #536440; }
 .summary .hydration { border-top: 3px solid #55778d; }
@@ -217,10 +193,9 @@
  .summary > div { padding: 14px 9px; }
  .water { padding: 20px 16px; }
  .routine { padding-left: 12px; padding-right: 12px; }
- .waterNumbers strong { font-size: 34px; }
 }
 
-.dailyProgress { display: flex; align-items: center; gap: 18px; margin-top: 26px; padding: 20px; border: 1px solid #cdd5c0; border-radius: 10px; background: #e2e6d8; }
+.dailyProgress { display: flex; align-items: center; gap: 18px; margin-top: 26px; padding: 20px; border: 1px solid #cdd5c0; border-radius: var(--radius-card); background: #e2e6d8; }
 .progressRing { display: grid; place-items: center; flex: 0 0 70px; height: 70px; border-radius: 50%; }
 .progressRing > span { display: grid; grid-auto-flow: column; align-items: baseline; place-content: center; width: 58px; height: 58px; border-radius: 50%; background: #e2e6d8; color: #435533; font-size: 22px; font-weight: 600; }
 .progressRing small { font-size: 11px; }
@@ -233,3 +208,8 @@
  .dailyProgress { position: absolute; right: 0; bottom: 12px; width: 340px; padding: 24px; margin: 0; min-height: 133px; }
  .header h1 { font-size: 52px; }
 }
+
+.date, .entries, .waterHeading p, .hydrationReadout > p, .hydrationReadout .hydrationRemaining, .bottleEquivalent, .weight p, .footer { color: #50616a; font-size: 12px; }
+.itemMeta, .summary span, .summary small, .kicker { font-size: 11px; }
+.hydrationLabel { font-size: 10px; }
+@media (max-width: 420px) { .hydrationDisplay { grid-template-columns: 96px minmax(0, 1fr); gap: 14px; } .bottleStage { width: 96px; } .water { padding: 18px; } .hydrationReadout > strong { font-size: 30px; } .waterButton { font-size: 12px; } }

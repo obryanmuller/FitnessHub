@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { StatusPill } from "@/components/ui/status-pill";
 import { useFitness, saveFitness } from "@/features/fitness/store";
 import { changeDay, dayKey, getDay, streak, toggleId, workoutPlanForDate, WORKOUT_ID, type Routine } from "@/features/fitness/model";
+import { UndoNotice, useQuickUndo } from "@/features/fitness/quick-undo";
 import { formatDateLong } from "@/lib/date";
 import styles from "./today-page.module.css";
 
@@ -14,6 +15,7 @@ const number = (value: number) => value.toLocaleString("pt-BR", { maximumFractio
 export function TodayPage() {
   const { data, today } = useFitness();
   const [waterFeedback, setWaterFeedback] = useState({ sequence: 0, amount: 0, reachedGoal: false });
+  const undo = useQuickUndo();
   const day = getDay(data, today);
   const bottleMl = data.profile.bottleMl;
   const completedItems = new Set(day.completed);
@@ -29,10 +31,19 @@ export function TodayPage() {
   const daysInRow = streak(data, today);
   const lastWeight = [...data.weights].sort((a, b) => b.date.localeCompare(a.date))[0];
   function toggleRoutineItem(item: Routine) {
-    saveFitness((current) => changeDay(current, dayKey(), (value) => ({ ...value, completed: toggleId(value.completed, item.id) })));
+    const date = dayKey();
+    const wasCompleted = getDay(data, date).completed.includes(item.id);
+    if (saveFitness((current) => changeDay(current, date, (value) => ({ ...value, completed: toggleId(value.completed, item.id) })))) {
+      undo.remember(item.title + (wasCompleted ? " reaberto." : " concluído."), (current) => changeDay(current, date, (value) => ({
+        ...value, completed: value.routine.some((entry) => entry.id === item.id) ? [...value.completed.filter((id) => id !== item.id), ...(wasCompleted ? [item.id] : [])] : value.completed,
+      })));
+    }
   }
   function addWater(amount: number) {
-    const saved = saveFitness((current) => changeDay(current, dayKey(), (value) => ({ ...value, waterMl: Math.max(0, Math.min(100000, value.waterMl + amount)) })));
+    const date = dayKey();
+    const previousWater = getDay(data, date).waterMl;
+    const saved = saveFitness((current) => changeDay(current, date, (value) => ({ ...value, waterMl: Math.max(0, Math.min(100000, value.waterMl + amount)) })));
+    if (saved) undo.remember(amount > 0 ? "Água adicionada." : "Água retirada.", (current) => changeDay(current, date, (value) => ({ ...value, waterMl: previousWater })));
     if (saved && amount > 0 && waterConsumedMl < 100000) {
       setWaterFeedback((previous) => ({ sequence: previous.sequence + 1, amount: Math.min(amount, 100000 - waterConsumedMl), reachedGoal: waterConsumedMl < waterGoal && waterConsumedMl + amount >= waterGoal }));
     }
@@ -40,6 +51,7 @@ export function TodayPage() {
 
   return (
     <main className={styles.page}>
+      <UndoNotice action={undo} />
       <header className={styles.header}>
         <div className={styles.eyebrow}>
           <span>
