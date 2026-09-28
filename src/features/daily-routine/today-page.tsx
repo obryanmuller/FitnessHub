@@ -60,6 +60,48 @@ export function TodayPage() {
         <div className={styles.hydration}><Droplets aria-hidden="true" /><span>Água</span><strong>{waterProgress}<small>% da meta</small></strong></div>
       </section>
 
+      {nextItem ? (
+        <Card className={`${styles.nextAction} ${nextItem.id === WORKOUT_ID ? styles.nextActionTraining : ""}`} aria-labelledby="next-task-title">
+          <div className={styles.nextActionHeading}>
+            <span className={styles.nextActionIcon} aria-hidden="true">{nextItem.id === WORKOUT_ID ? <Dumbbell size={20} /> : <Utensils size={20} />}</span>
+            <div>
+              <p>Próxima tarefa</p>
+              <h2 id="next-task-title">{nextItem.title}</h2>
+            </div>
+            <time>{nextItem.time}</time>
+          </div>
+          <p className={styles.nextActionEntries}>{nextItem.entries.join(" · ")}</p>
+          <button type="button" className={styles.nextActionButton} onClick={() => toggleRoutineItem(nextItem)}>
+            <Check size={18} aria-hidden="true" />
+            Marcar como concluído
+          </button>
+        </Card>
+      ) : (
+        <Card className={styles.nextAction} aria-labelledby="next-task-title">
+          <div className={styles.nextActionHeading}>
+            <span className={styles.nextActionIcon} aria-hidden="true"><Check size={20} /></span>
+            <div>
+              <p>Próxima tarefa</p>
+              <h2 id="next-task-title">Tudo concluído por hoje</h2>
+            </div>
+          </div>
+          <p className={styles.nextActionEntries}>Dia cuidado, etapa por etapa. Muito bem!</p>
+        </Card>
+      )}
+
+      <Card className={styles.water} aria-labelledby="water-title">
+        <div className={styles.waterHeading}><span className={styles.waterIcon}><Droplets size={22} aria-hidden="true" /></span><div><h2 id="water-title">Uma pausa para água</h2><p>Sua garrafa tem {number(bottleMl)} ml</p></div><Waves className={styles.waves} size={28} aria-hidden="true" /></div>
+        <div className={styles.waterNumbers} aria-live="polite"><strong>{number(waterConsumedMl)} <span>/ {number(waterGoal)} ml</span></strong><p>Equivale a {number(waterConsumedMl / bottleMl)} garrafas</p></div>
+        <div className={styles.waterTrack} role="progressbar" aria-label="Água consumida" aria-valuemin={0} aria-valuemax={waterGoal} aria-valuenow={Math.min(waterConsumedMl, waterGoal)} aria-valuetext={`${number(waterConsumedMl)} de ${number(waterGoal)} ml`}><span style={{ width: `${waterProgress}%` }} /></div>
+        <div className={styles.bottleRow} aria-hidden="true">{Array.from({ length: Math.min(8, Math.ceil(waterGoal / bottleMl)) }, (_, index) => <span key={index} className={styles.bottle}><span style={{ height: `${Math.min(100, Math.max(0, (waterConsumedMl - index * bottleMl) / bottleMl * 100))}%` }} /></span>)}<p>Meta do dia<strong>{Math.floor(waterGoal / bottleMl)} garrafas{waterGoal % bottleMl > 0 ? ` + ${waterGoal % bottleMl} ml` : ""}</strong></p></div>
+        <div className={styles.waterActions}>
+          <button type="button" onClick={() => addWater(-bottleMl)} disabled={waterConsumedMl === 0} className={styles.waterUndo} aria-label={"Retirar " + bottleMl + " ml"}>−</button>
+          <button type="button" onClick={() => addWater(bottleMl)} disabled={waterConsumedMl >= 100000} className={styles.waterButton}><Plus size={18} aria-hidden="true" />+1 garrafa · {number(bottleMl)} ml</button>
+        </div>
+        {waterConsumedMl >= waterGoal && <p className={styles.waterSuccess}>Meta de hoje alcançada!</p>}
+
+      </Card>
+
       <section aria-labelledby="routine-title" className={styles.routine}>
         <div className={styles.sectionHeading}>
           <div><p className={styles.kicker}>UM PASSO DE CADA VEZ</p><h2 id="routine-title">Seu dia</h2></div>
@@ -91,19 +133,6 @@ export function TodayPage() {
         </ol>
         {completedCount === totalItems && <p className={styles.allDone}>Dia cuidado, etapa por etapa. Muito bem!</p>}
       </section>
-
-      <Card className={styles.water} aria-labelledby="water-title">
-        <div className={styles.waterHeading}><span className={styles.waterIcon}><Droplets size={22} aria-hidden="true" /></span><div><h2 id="water-title">Uma pausa para água</h2><p>Sua garrafa tem {number(bottleMl)} ml</p></div><Waves className={styles.waves} size={28} aria-hidden="true" /></div>
-        <div className={styles.waterNumbers} aria-live="polite"><strong>{number(waterConsumedMl)} <span>/ {number(waterGoal)} ml</span></strong><p>Equivale a {number(waterConsumedMl / bottleMl)} garrafas</p></div>
-        <div className={styles.waterTrack} role="progressbar" aria-label="Água consumida" aria-valuemin={0} aria-valuemax={waterGoal} aria-valuenow={Math.min(waterConsumedMl, waterGoal)} aria-valuetext={`${number(waterConsumedMl)} de ${number(waterGoal)} ml`}><span style={{ width: `${waterProgress}%` }} /></div>
-        <div className={styles.bottleRow} aria-hidden="true">{Array.from({ length: Math.min(8, Math.ceil(waterGoal / bottleMl)) }, (_, index) => <span key={index} className={styles.bottle}><span style={{ height: `${Math.min(100, Math.max(0, (waterConsumedMl - index * bottleMl) / bottleMl * 100))}%` }} /></span>)}<p>Meta do dia<strong>{Math.floor(waterGoal / bottleMl)} garrafas{waterGoal % bottleMl > 0 ? ` + ${waterGoal % bottleMl} ml` : ""}</strong></p></div>
-        <div className={styles.waterActions}>
-          <button type="button" onClick={() => addWater(-bottleMl)} disabled={waterConsumedMl === 0} className={styles.waterUndo} aria-label={"Retirar " + bottleMl + " ml"}>−</button>
-          <button type="button" onClick={() => addWater(bottleMl)} disabled={waterConsumedMl >= 100000} className={styles.waterButton}><Plus size={18} aria-hidden="true" />+1 garrafa · {number(bottleMl)} ml</button>
-        </div>
-        {waterConsumedMl >= waterGoal && <p className={styles.waterSuccess}>Meta de hoje alcançada!</p>}
-
-      </Card>
 
       <section className={styles.weight} aria-label="Último registro de peso"><span className={styles.weightIcon}><Scale size={20} aria-hidden="true" /></span><div><h2>Seu progresso</h2><p>Último registro de peso</p></div><strong>{lastWeight ? <>{number(lastWeight.kg)} <small>kg</small></> : <small>Sem registro</small>}</strong></section>
       <p className={styles.footer}>Cuidar de você começa nas pequenas escolhas.</p>
