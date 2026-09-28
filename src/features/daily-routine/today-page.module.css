@@ -90,7 +90,41 @@
 .waterUndo { flex: 0 0 46px; min-height: 46px; border: 1px solid #9fc2ce; border-radius: 10px; font-size: 22px; cursor: pointer; }
 .waterUndo:disabled { opacity: .4; cursor: default; }
 .waterUndo:focus-visible { outline: 3px solid #36566c; outline-offset: 3px; }
-.waterSuccess { margin-top: 12px; font-size: 12px; text-align: center; }
+.waterSuccess { display: flex; justify-content: center; align-items: center; gap: 7px; margin-top: 14px; padding: 10px; border: 1px solid #bfcdb3; border-radius: 8px; background: #e4ecdd; color: #435533; font-size: 12px; text-align: center; }
+
+.hydrationDisplay { display: grid; grid-template-columns: 108px minmax(0, 1fr); align-items: center; gap: 20px; margin: 28px 0 20px; }
+.bottleStage { position: relative; width: 108px; padding: 0 7px 16px; }
+.bottleCap { width: 44px; height: 18px; margin: 0 auto; border: 2px solid #36566c; border-radius: 5px 5px 2px 2px; background: repeating-linear-gradient(90deg, #36566c 0 4px, #547488 4px 6px); }
+.bottleBody { position: relative; isolation: isolate; overflow: hidden; height: 188px; border: 2px solid #608194; border-radius: 26px 26px 15px 15px; background: #f4f8fa99; box-shadow: inset -7px 0 12px #36566c12; }
+.bottleLiquid { position: absolute; bottom: 0; inset-inline: 0; background: linear-gradient(180deg, #85adbe, #4d7d97); transition: height .85s cubic-bezier(.22, 1, .36, 1); }
+.liquidWave, .liquidWaveAnimated { position: absolute; left: -50%; bottom: calc(100% - 1px); width: 200%; height: 12px; fill: #85adbe; }
+.liquidWaveAnimated { animation: liquidSway .8s ease-in-out 3; }
+.bottleGraduations { position: absolute; inset: 24px 10px 20px auto; display: flex; flex-direction: column; justify-content: space-between; }
+.bottleGraduations span { width: 12px; border-top: 2px solid #36566c70; }
+.bottleGraduations span:nth-child(even) { width: 8px; margin-left: auto; }
+.bottleEmblem { position: absolute; left: 16px; top: 76px; display: grid; place-items: center; width: 38px; height: 42px; border: 1px solid #ffffff70; border-radius: 8px; color: #36566c; background: #f3f8fac9; }
+.bottleShine { position: absolute; left: 8px; top: 19px; width: 5px; height: 143px; background: #ffffff55; border-radius: 9px; }
+.bottleShadow { position: absolute; bottom: 0; left: 12px; right: 12px; height: 7px; border-radius: 50%; background: #36566c20; filter: blur(2px); }
+.bubbles { position: absolute; inset: 0; overflow: hidden; }
+.bubbles i { position: absolute; bottom: 0; left: 20%; width: 7px; height: 7px; border: 1px solid #eaf6ff; border-radius: 50%; animation: bubbleRise 1.2s ease-out both; }
+.bubbles i:nth-child(2) { left: 65%; width: 5px; height: 5px; animation-delay: .15s; }
+.bubbles i:nth-child(3) { left: 40%; width: 9px; height: 9px; animation-delay: .3s; }
+.bubbles i:nth-child(4) { left: 78%; animation-delay: .1s; }
+.hydrationLabel { display: block; font-size: 9px; letter-spacing: .12em; color: #506c7c; font-weight: 750; }
+.hydrationReadout > strong { display: block; margin-top: 9px; font-size: clamp(26px, 3vw, 38px); line-height: 1.15; letter-spacing: -.05em; color: #29495e; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.hydrationReadout small { font-size: 13px; letter-spacing: 0; font-weight: 500; }
+.hydrationReadout > p { font-size: 12px; color: #506c7c; margin-top: 5px; }
+.hydrationPercent { display: inline-block; margin-top: 18px; padding: 5px 9px; background: #f4f8fa; border: 1px solid #b9cdd7; border-radius: 6px; font-size: 16px; font-weight: 750; color: #36566c; }
+.hydrationPercent span { font-size: 10px; font-weight: 500; }
+.hydrationReadout .hydrationRemaining { margin-top: 12px; line-height: 1.6; font-size: 11px; }
+.bottleEquivalent { margin-bottom: 18px; padding-top: 14px; border-top: 1px solid #bfcfd8; font-size: 11px; line-height: 1.7; color: #36566c; }
+.bottleEquivalent span { color: #506c7c; }
+.goalCelebration { animation: hydrationGoal .8s ease-out both; }
+@keyframes liquidSway { 0%, 100% { transform: translateX(-8%); } 50% { transform: translateX(8%); } }
+@keyframes bubbleRise { 0% { opacity: 0; transform: translateY(0) scale(.5); } 20% { opacity: .9; } 100% { opacity: 0; transform: translateY(-160px) scale(1.2); } }
+@keyframes hydrationGoal { 0% { transform: scale(.94); box-shadow: 0 0 0 0 #70885140; } 50% { transform: scale(1.02); box-shadow: 0 0 0 9px #70885100; } 100% { transform: scale(1); box-shadow: 0 0 0 12px #70885100; } }
+@media (max-width: 370px) { .hydrationDisplay { gap: 12px; grid-template-columns: 98px minmax(0, 1fr); } .bottleStage { width: 98px; } }
+@media (prefers-reduced-motion: reduce) { .liquidWaveAnimated, .bubbles i, .goalCelebration { animation: none; } .bubbles { display: none; } .bottleLiquid { transition: none; } }
 
 /* A fresh, bounded burst for each successful addition, without remounting the button. */
 .waterButton { position: relative; isolation: isolate; }
