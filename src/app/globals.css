@@ -2,30 +2,18 @@
 
 :root {
   color-scheme: light;
-  --background: #f6f8f5;
-  --foreground: #17201a;
+  --background: #f1f0ea;
+  --foreground: #29312e;
+  --ink: #29312e;
+  --muted: #646b63;
+  --surface: #fcfcf8;
+  --line: #d8dcd2;
+  --accent: #536440;
+  --accent-soft: #e3e8d9;
 }
-
-* {
-  box-sizing: border-box;
-}
-
-html {
-  min-height: 100%;
-  background: var(--background);
-}
-
-body {
-  min-height: 100%;
-  margin: 0;
-  background:
-    radial-gradient(circle at top left, rgba(52, 211, 153, 0.16), transparent 32rem),
-    linear-gradient(180deg, #f7faf6 0%, #eef3ef 100%);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
-}
-
-button,
-input {
-  font: inherit;
-}
+* { box-sizing: border-box; }
+html { min-height: 100%; background: var(--background); }
+body { min-height: 100%; margin: 0; background: var(--background); color: var(--foreground); font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif; }
+button, input, select, textarea { font: inherit; }
+:where(a, button, input, select, textarea, summary):focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+::selection { background: #ced7bc; color: #29312e; }

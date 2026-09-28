@@ -1,6 +1,7 @@
 "use client";
 
-import { Check, Droplets, Dumbbell, Flame, Leaf, Plus, Scale, Sun, Utensils, Waves } from "lucide-react";
+import { useState } from "react";
+import { Check, Droplets, Dumbbell, Flame, Activity, Plus, Scale, Sun, Utensils, Waves } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { StatusPill } from "@/components/ui/status-pill";
 import { useFitness, saveFitness } from "@/features/fitness/store";
@@ -12,6 +13,7 @@ const number = (value: number) => value.toLocaleString("pt-BR", { maximumFractio
 
 export function TodayPage() {
   const { data, today } = useFitness();
+  const [waterFeedback, setWaterFeedback] = useState({ sequence: 0, amount: 0 });
   const day = getDay(data, today);
   const bottleMl = data.profile.bottleMl;
   const completedItems = new Set(day.completed);
@@ -30,7 +32,10 @@ export function TodayPage() {
     saveFitness((current) => changeDay(current, dayKey(), (value) => ({ ...value, completed: toggleId(value.completed, item.id) })));
   }
   function addWater(amount: number) {
-    saveFitness((current) => changeDay(current, dayKey(), (value) => ({ ...value, waterMl: Math.max(0, Math.min(100000, value.waterMl + amount)) })));
+    const saved = saveFitness((current) => changeDay(current, dayKey(), (value) => ({ ...value, waterMl: Math.max(0, Math.min(100000, value.waterMl + amount)) })));
+    if (saved && amount > 0 && waterConsumedMl < 100000) {
+      setWaterFeedback((previous) => ({ sequence: previous.sequence + 1, amount: Math.min(amount, 100000 - waterConsumedMl) }));
+    }
   }
 
   return (
@@ -38,7 +43,7 @@ export function TodayPage() {
       <header className={styles.header}>
         <div className={styles.eyebrow}>
           <span>
-            <Leaf size={15} aria-hidden="true" />
+            <Activity size={15} aria-hidden="true" />
             FITNESSHUB
           </span>
 
@@ -52,6 +57,10 @@ export function TodayPage() {
         <p className={styles.subtitle}>
           Acompanhe sua rotina, metas e progresso.
         </p>
+        <div className={styles.dailyProgress}>
+          <div className={styles.progressRing} style={{ background: `conic-gradient(#536440 ${totalItems ? completedCount / totalItems * 100 : 0}%, #c8d0bd 0)` }} aria-hidden="true"><span>{totalItems ? Math.round(completedCount / totalItems * 100) : 0}<small>%</small></span></div>
+          <div><p>CONSISTÊNCIA DIÁRIA</p><strong>Mantenha o ritmo.</strong><span>{completedCount} de {totalItems} etapas concluídas hoje</span></div>
+        </div>
       </header>
 
       <section className={styles.summary} aria-label="Resumo do dia">
@@ -93,20 +102,27 @@ export function TodayPage() {
       </section>
 
       <Card className={styles.water} aria-labelledby="water-title">
-        <div className={styles.waterHeading}><span className={styles.waterIcon}><Droplets size={22} aria-hidden="true" /></span><div><h2 id="water-title">Uma pausa para água</h2><p>Sua garrafa tem {number(bottleMl)} ml</p></div><Waves className={styles.waves} size={28} aria-hidden="true" /></div>
+        <div className={styles.waterHeading}><span className={styles.waterIcon}><Droplets size={22} aria-hidden="true" /></span><div><h2 id="water-title">Hidratação</h2><p>Sua garrafa tem {number(bottleMl)} ml</p></div><Waves className={styles.waves} size={28} aria-hidden="true" /></div>
         <div className={styles.waterNumbers} aria-live="polite"><strong>{number(waterConsumedMl)} <span>/ {number(waterGoal)} ml</span></strong><p>Equivale a {number(waterConsumedMl / bottleMl)} garrafas</p></div>
         <div className={styles.waterTrack} role="progressbar" aria-label="Água consumida" aria-valuemin={0} aria-valuemax={waterGoal} aria-valuenow={Math.min(waterConsumedMl, waterGoal)} aria-valuetext={`${number(waterConsumedMl)} de ${number(waterGoal)} ml`}><span style={{ width: `${waterProgress}%` }} /></div>
         <div className={styles.bottleRow} aria-hidden="true">{Array.from({ length: Math.min(8, Math.ceil(waterGoal / bottleMl)) }, (_, index) => <span key={index} className={styles.bottle}><span style={{ height: `${Math.min(100, Math.max(0, (waterConsumedMl - index * bottleMl) / bottleMl * 100))}%` }} /></span>)}<p>Meta do dia<strong>{Math.floor(waterGoal / bottleMl)} garrafas{waterGoal % bottleMl > 0 ? ` + ${waterGoal % bottleMl} ml` : ""}</strong></p></div>
         <div className={styles.waterActions}>
           <button type="button" onClick={() => addWater(-bottleMl)} disabled={waterConsumedMl === 0} className={styles.waterUndo} aria-label={"Retirar " + bottleMl + " ml"}>−</button>
-          <button type="button" onClick={() => addWater(bottleMl)} disabled={waterConsumedMl >= 100000} className={styles.waterButton}><Plus size={18} aria-hidden="true" />+1 garrafa · {number(bottleMl)} ml</button>
+          <button type="button" onClick={() => addWater(bottleMl)} disabled={waterConsumedMl >= 100000} className={styles.waterButton}>
+            <Plus size={18} aria-hidden="true" />+1 garrafa · {number(bottleMl)} ml
+            {waterFeedback.sequence > 0 && <span key={waterFeedback.sequence} className={styles.waterFeedback} aria-hidden="true">
+              <span className={styles.waterRipple} />
+              <span className={styles.waterSplash}><i /><i /><i /><i /><i /></span>
+              <span className={styles.waterAdded}>+{number(waterFeedback.amount)} ml</span>
+            </span>}
+          </button>
         </div>
         {waterConsumedMl >= waterGoal && <p className={styles.waterSuccess}>Meta de hoje alcançada!</p>}
 
       </Card>
 
       <section className={styles.weight} aria-label="Último registro de peso"><span className={styles.weightIcon}><Scale size={20} aria-hidden="true" /></span><div><h2>Seu progresso</h2><p>Último registro de peso</p></div><strong>{lastWeight ? <>{number(lastWeight.kg)} <small>kg</small></> : <small>Sem registro</small>}</strong></section>
-      <p className={styles.footer}>Cuidar de você começa nas pequenas escolhas.</p>
+      <p className={styles.footer}>Treino, nutrição e constância. Todos os dias.</p>
     </main>
   );
 }

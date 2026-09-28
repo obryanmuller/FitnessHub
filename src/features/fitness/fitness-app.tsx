@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useSyncExternalStore } from "react";
-import { CloudOff, Leaf, RefreshCw } from "lucide-react";
+import { CloudOff, Activity, RefreshCw } from "lucide-react";
 import { BottomNavigation } from "@/components/dashboard/bottom-navigation";
 import { TodayPage } from "@/features/daily-routine/today-page";
 import { Meals, Workouts, Progress, ProfilePage } from "./screens";
@@ -30,7 +30,7 @@ export function FitnessApp() {
     const section = navigation.find((item) => item.href === tab)?.label ?? "Hoje";
     document.title = `${section} · ${data.profile.name} · FitnessHub`;
   }, [data.profile.name, tab]);
-  if (!ready) return <main className={styles.page}><Leaf aria-hidden="true" /><h1>Seu dia começa aqui.</h1><p role="status">Abrindo seus registros…</p></main>;
+  if (!ready) return <main className={styles.page}><Activity aria-hidden="true" /><h1>Seu dia começa aqui.</h1><p role="status">Abrindo seus registros…</p></main>;
   return (
     <div className={styles.app}>
       {error && <div role="alert" className={styles.error}>{error}<button type="button" onClick={() => void retryStorage()}>Tentar novamente</button></div>}

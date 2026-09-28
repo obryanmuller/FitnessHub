@@ -1,0 +1,27 @@
+.navigation { position: fixed; z-index: 20; inset: auto 12px max(12px, env(safe-area-inset-bottom)); padding: 8px; border: 1px solid var(--line); border-radius: 10px; background: #fcfcf8f5; box-shadow: 0 8px 40px #46352412; backdrop-filter: blur(16px); }
+.brand, .caption, .note { display: none; }
+.items { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 3px; list-style: none; padding: 0; margin: 0; }
+.link { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; min-height: 58px; border-radius: 10px; color: var(--muted); text-decoration: none; font-size: 10px; font-weight: 600; transition: background .2s, color .2s; }
+.link[aria-current] { background: var(--accent-soft); color: var(--accent); }
+.link:hover { background: #f3eee6; }
+.link[aria-disabled=true] { opacity: .45; cursor: not-allowed; }
+.activeDot { display: none; }
+@media (min-width: 1000px) {
+  .navigation { inset: 0 auto 0 0; width: 232px; border: 0; border-right: 1px solid var(--line); border-radius: 0; padding: 40px 22px 28px; display: flex; flex-direction: column; background: var(--surface); box-shadow: none; }
+  .brand { display: flex; align-items: center; gap: 9px; color: var(--ink); font-size: 24px; font-weight: 750; letter-spacing: -1.2px; text-decoration: none; }
+  .brand > span:first-child { display: grid; place-items: center; width: 36px; height: 36px; background: var(--accent); color: white; border-radius: 12px; }
+  .brand .brandDot { color: var(--accent); margin-left: -8px; }
+  .caption { display: block; margin: 52px 12px 20px; font-size: 9px; letter-spacing: .13em; color: var(--muted); }
+  .items { grid-template-columns: 1fr; gap: 9px; }
+  .link { flex-direction: row; justify-content: flex-start; padding: 0 16px; gap: 13px; font-size: 13px; min-height: 52px; border-radius: 12px; }
+  .activeDot { display: block; width: 6px; height: 6px; margin-left: auto; background: var(--accent); border-radius: 50%; }
+  .note { display: block; margin-top: auto; padding: 22px 16px; border-top: 1px solid var(--line); color: var(--accent); }
+  .note p { font-family: var(--font-geist-sans), Arial, sans-serif; font-size: 23px; line-height: 1.35; margin: 18px 0 12px; color: var(--ink); }
+  .note em { color: var(--accent); font-style: normal; }
+  .note > span { font-size: 10px; color: var(--muted); line-height: 1.7; }
+}
+@media (prefers-reduced-motion: reduce) { .link { transition: none; } }
+
+.brand { font-weight: 850; }
+.note p { font-weight: 750; font-size: 21px; letter-spacing: -.045em; }
+.link[aria-current] { box-shadow: inset 3px 0 0 var(--accent); }

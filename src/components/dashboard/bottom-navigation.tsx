@@ -1,28 +1,23 @@
 "use client";
 
-import { Activity, Dumbbell, Home, LineChart, UserRound, Utensils } from "lucide-react";
-import { cn } from "@/lib/cn";
+import { Activity, ArrowUpRight, Dumbbell, Home, LineChart, UserRound, Utensils } from "lucide-react";
 import type { NavigationItem } from "@/types/navigation";
+import styles from "./navigation.module.css";
 
 const iconMap = { home: Home, meals: Utensils, workouts: Dumbbell, progress: LineChart, profile: UserRound } satisfies Record<NavigationItem["icon"], typeof Activity>;
-type BottomNavigationProps = { items: NavigationItem[] };
 
-export function BottomNavigation({ items }: BottomNavigationProps) {
+export function BottomNavigation({ items }: { items: NavigationItem[] }) {
   return (
-    <nav aria-label="Navegação principal" className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[560px] rounded-t-[26px] border border-[#e6eade] bg-[#fcfdf9]/95 px-2 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] pt-2 shadow-[0_-4px_24px_rgba(35,62,44,0.035)] backdrop-blur-xl">
-      <ul className="grid grid-cols-5 gap-0.5">
+    <nav aria-label="Navegação principal" className={styles.navigation}>
+      <a href="#hoje" className={styles.brand} aria-label="FitnessHub — início"><span><Activity size={24} aria-hidden="true" /></span>fitnesshub<span className={styles.brandDot}>.</span></a>
+      <p className={styles.caption}>SEU PAINEL DE EVOLUÇÃO</p>
+      <ul className={styles.items}>
         {items.map((item) => {
           const Icon = iconMap[item.icon];
-          return (
-            <li key={item.label}>
-              <a href={item.disabled ? undefined : item.href} aria-current={item.active ? "page" : undefined} aria-disabled={item.disabled} className={cn("group flex min-h-16 w-full flex-col items-center justify-center gap-1.5 rounded-2xl px-0.5 text-[10px] font-medium transition active:scale-95 motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700", item.active ? "text-[#365c43]" : "text-[#788274]", item.disabled && "cursor-not-allowed")}>
-                <span className={cn("flex h-8 w-12 items-center justify-center rounded-xl transition motion-reduce:transition-none", item.active ? "bg-[#e5eddc]" : "group-hover:bg-[#eff2e8]")}><Icon aria-hidden="true" className="h-[19px] w-[19px]" strokeWidth={item.active ? 2.3 : 1.7} /></span>
-                <span className="leading-none">{item.label}</span>
-              </a>
-            </li>
-          );
+          return <li key={item.href}><a href={item.disabled ? undefined : item.href} aria-current={item.active ? "page" : undefined} aria-disabled={item.disabled} className={styles.link}><Icon size={21} aria-hidden="true" strokeWidth={item.active ? 2.2 : 1.7} /><span>{item.label}</span>{item.active && <span className={styles.activeDot} />}</a></li>;
         })}
       </ul>
+      <div className={styles.note}><ArrowUpRight size={24} aria-hidden="true" /><p>Foco na rotina.<br /><em>Evolução constante.</em></p><span>Seu próximo passo começa hoje.</span></div>
     </nav>
   );
 }

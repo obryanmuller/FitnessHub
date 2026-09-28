@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, type FormEvent, type ReactNode } from "react";
-import { Check, Download, Dumbbell, Flame, Leaf, Pencil, Plus, Scale, Trash2, Upload, Utensils } from "lucide-react";
+import { Check, Download, Dumbbell, Flame, Activity, Pencil, Plus, Scale, Trash2, Upload, Utensils } from "lucide-react";
 import { changeDay, changePlan, dayKey, isFitnessData, streak, workoutExerciseCount, WORKOUT_ID, type FitnessData, type Routine } from "./model";
 import { saveFitness, useFitness } from "./store";
 import { ProfileManager } from "./profile-manager";
@@ -17,7 +17,7 @@ const dateLabel = (date: string) => new Date(date + "T12:00:00").toLocaleDateStr
 const read = (form: FormData, key: string) => String(form.get(key) ?? "").trim();
 
 function Heading({ eyebrow, title, description, icon }: { eyebrow: string; title: string; description: string; icon: ReactNode }) {
-  return <header className={styles.heading}><div className={styles.eyebrow}><span><Leaf size={14} aria-hidden="true" /> FITNESSHUB</span>{icon}</div><p>{eyebrow}</p><h1>{title}</h1><div className={styles.description}>{description}</div></header>;
+  return <header className={styles.heading}><div className={styles.eyebrow}><span><Activity size={14} aria-hidden="true" /> FITNESSHUB</span>{icon}</div><p>{eyebrow}</p><h1>{title}</h1><div className={styles.description}>{description}</div></header>;
 }
 function Notice({ children }: { children: ReactNode }) { return <p className={styles.notice} role="status">{children}</p>; }
 function Remove({ label, onRemove }: { label: string; onRemove: () => void }) {
@@ -108,7 +108,7 @@ export function ProfilePage() {
     } catch { setNotice("Não foi possível preparar o backup neste navegador."); }
   }
   return <main className={styles.page}>
-    <Heading eyebrow="DO SEU JEITO" title="Seu perfil" description="Pequenos ajustes para uma rotina que combina com você." icon={<Leaf size={22} aria-hidden="true" />} />
+    <Heading eyebrow="DO SEU JEITO" title="Seu perfil" description="Pequenos ajustes para uma rotina que combina com você." icon={<Activity size={22} aria-hidden="true" />} />
     <div className={styles.identity}><span>{data.profile.name.slice(0, 1).toLocaleUpperCase("pt-BR")}</span><div><h2>{data.profile.name}</h2><p>Um dia de cada vez.</p></div><ProfileManager /></div>
     <form key={JSON.stringify(data.profile)} className={styles.form} onSubmit={submit}><label>Como você quer ser chamado?<input name="name" defaultValue={data.profile.name} maxLength={60} required autoComplete="given-name" /></label><div className={styles.fieldGrid}><label>Meta de água (ml)<input type="number" name="waterGoal" min={200} max={10000} step={1} defaultValue={data.profile.waterGoal} required /></label><label>Sua garrafa (ml)<input type="number" name="bottleMl" min={100} max={3000} step={1} defaultValue={data.profile.bottleMl} required /></label></div><label>Meta de peso (kg, opcional)<input name="targetKg" type="number" min={20} max={500} step="0.1" defaultValue={data.profile.targetKg ?? ""} placeholder="Sua meta pessoal" /></label><p className={styles.hint}>A meta de água muda a partir de hoje. O consumo já registrado é mantido.</p><button className={styles.primary} type="submit"><Check size={17} /> Salvar perfil</button></form>
     <NotificationSettings />
