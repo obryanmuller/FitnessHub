@@ -96,9 +96,14 @@
 .bottleStage { position: relative; width: 108px; padding: 0 7px 16px; }
 .bottleCap { width: 44px; height: 18px; margin: 0 auto; border: 2px solid #36566c; border-radius: 5px 5px 2px 2px; background: repeating-linear-gradient(90deg, #36566c 0 4px, #547488 4px 6px); }
 .bottleBody { position: relative; isolation: isolate; overflow: hidden; height: 188px; border: 2px solid #608194; border-radius: 26px 26px 15px 15px; background: #f4f8fa99; box-shadow: inset -7px 0 12px #36566c12; }
-.bottleLiquid { position: absolute; bottom: 0; inset-inline: 0; background: linear-gradient(180deg, #85adbe, #4d7d97); transition: height .85s cubic-bezier(.22, 1, .36, 1); }
-.liquidWave, .liquidWaveAnimated { position: absolute; left: -50%; bottom: calc(100% - 1px); width: 200%; height: 12px; fill: #85adbe; }
-.liquidWaveAnimated { animation: liquidSway .8s ease-in-out 3; }
+.bottleLiquid { position: absolute; bottom: 0; inset-inline: 0; transition: height 1.35s cubic-bezier(.4, 0, .2, 1); }
+.liquidSurface { position: absolute; inset: 0 -22px -28px; transform-origin: center top; background: linear-gradient(180deg, #79a9bd, #4d7d97); }
+.liquidWaveBack, .liquidWaveFront { position: absolute; left: -50%; bottom: calc(100% - 1px); width: 200%; height: 22px; transform-origin: center bottom; }
+.liquidWaveBack { fill: #a1c9d8; opacity: .8; }
+.liquidWaveFront { fill: #79a9bd; }
+.liquidPouring { animation: liquidSlosh 3.2s ease-in-out both; }
+.liquidPouring .liquidWaveBack { animation: waveBack 3.2s ease-in-out both; }
+.liquidPouring .liquidWaveFront { animation: waveFront 3.2s ease-in-out both; }
 .bottleGraduations { position: absolute; inset: 24px 10px 20px auto; display: flex; flex-direction: column; justify-content: space-between; }
 .bottleGraduations span { width: 12px; border-top: 2px solid #36566c70; }
 .bottleGraduations span:nth-child(even) { width: 8px; margin-left: auto; }
@@ -106,10 +111,12 @@
 .bottleShine { position: absolute; left: 8px; top: 19px; width: 5px; height: 143px; background: #ffffff55; border-radius: 9px; }
 .bottleShadow { position: absolute; bottom: 0; left: 12px; right: 12px; height: 7px; border-radius: 50%; background: #36566c20; filter: blur(2px); }
 .bubbles { position: absolute; inset: 0; overflow: hidden; }
-.bubbles i { position: absolute; bottom: 0; left: 20%; width: 7px; height: 7px; border: 1px solid #eaf6ff; border-radius: 50%; animation: bubbleRise 1.2s ease-out both; }
+.bubbles i { position: absolute; bottom: 12px; left: 28%; width: 7px; height: 7px; background: #eaf6ff30; border: 1px solid #eaf6ffb0; border-radius: 50%; animation: bubbleRise 1.8s ease-out both; }
 .bubbles i:nth-child(2) { left: 65%; width: 5px; height: 5px; animation-delay: .15s; }
 .bubbles i:nth-child(3) { left: 40%; width: 9px; height: 9px; animation-delay: .3s; }
 .bubbles i:nth-child(4) { left: 78%; animation-delay: .1s; }
+.bubbles i:nth-child(5) { left: 48%; width: 4px; height: 4px; animation-delay: .5s; }
+.bubbles i:nth-child(6) { left: 57%; width: 6px; height: 6px; animation-delay: .7s; }
 .hydrationLabel { display: block; font-size: 9px; letter-spacing: .12em; color: #506c7c; font-weight: 750; }
 .hydrationReadout > strong { display: block; margin-top: 9px; font-size: clamp(26px, 3vw, 38px); line-height: 1.15; letter-spacing: -.05em; color: #29495e; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
 .hydrationReadout small { font-size: 13px; letter-spacing: 0; font-weight: 500; }
@@ -120,11 +127,13 @@
 .bottleEquivalent { margin-bottom: 18px; padding-top: 14px; border-top: 1px solid #bfcfd8; font-size: 11px; line-height: 1.7; color: #36566c; }
 .bottleEquivalent span { color: #506c7c; }
 .goalCelebration { animation: hydrationGoal .8s ease-out both; }
-@keyframes liquidSway { 0%, 100% { transform: translateX(-8%); } 50% { transform: translateX(8%); } }
+@keyframes liquidSlosh { 0% { transform: rotate(0deg) translateY(0); } 14% { transform: rotate(-8deg) translateY(5px); } 30% { transform: rotate(7deg) translateY(-3px); } 46% { transform: rotate(-5deg) translateY(2px); } 63% { transform: rotate(3deg); } 80% { transform: rotate(-1.5deg); } 100% { transform: rotate(0deg) translateY(0); } }
+@keyframes waveFront { 0%, 100% { transform: translateX(0) scaleY(1); } 18% { transform: translateX(-17%) scaleY(1.4); } 38% { transform: translateX(12%) scaleY(.8); } 58% { transform: translateX(-9%) scaleY(1.2); } 78% { transform: translateX(5%) scaleY(.9); } }
+@keyframes waveBack { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(15%) translateY(-5px); } 40% { transform: translateX(-13%) translateY(2px); } 60% { transform: translateX(8%) translateY(-2px); } 80% { transform: translateX(-4%); } }
 @keyframes bubbleRise { 0% { opacity: 0; transform: translateY(0) scale(.5); } 20% { opacity: .9; } 100% { opacity: 0; transform: translateY(-160px) scale(1.2); } }
 @keyframes hydrationGoal { 0% { transform: scale(.94); box-shadow: 0 0 0 0 #70885140; } 50% { transform: scale(1.02); box-shadow: 0 0 0 9px #70885100; } 100% { transform: scale(1); box-shadow: 0 0 0 12px #70885100; } }
 @media (max-width: 370px) { .hydrationDisplay { gap: 12px; grid-template-columns: 98px minmax(0, 1fr); } .bottleStage { width: 98px; } }
-@media (prefers-reduced-motion: reduce) { .liquidWaveAnimated, .bubbles i, .goalCelebration { animation: none; } .bubbles { display: none; } .bottleLiquid { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .liquidPouring, .liquidPouring .liquidWaveBack, .liquidPouring .liquidWaveFront, .bubbles i, .goalCelebration { animation: none; } .bubbles { display: none; } .bottleLiquid { transition: none; } }
 
 /* A fresh, bounded burst for each successful addition, without remounting the button. */
 .waterButton { position: relative; isolation: isolate; }

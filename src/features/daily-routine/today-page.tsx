@@ -105,8 +105,11 @@ export function TodayPage() {
             <div className={styles.bottleCap} />
             <div className={styles.bottleBody} aria-hidden="true">
               <div className={styles.bottleLiquid} style={{ visibility: waterConsumedMl === 0 ? "hidden" : "visible", height: `${Math.min(100, waterConsumedMl / waterGoal * 100)}%` }}>
-                <svg key={waterFeedback.sequence} className={waterFeedback.sequence ? styles.liquidWaveAnimated : styles.liquidWave} viewBox="0 0 240 20" preserveAspectRatio="none"><path d="M0 10 Q30 0 60 10 T120 10 T180 10 T240 10 V20 H0Z" /></svg>
-                {waterFeedback.sequence > 0 && <div key={waterFeedback.sequence} className={styles.bubbles}><i /><i /><i /><i /></div>}
+                <div key={waterFeedback.sequence} className={`${styles.liquidSurface} ${waterFeedback.sequence > 0 ? styles.liquidPouring : ""}`}>
+                  <svg className={styles.liquidWaveBack} viewBox="0 0 240 32" preserveAspectRatio="none"><path d="M0 16 Q30 0 60 16 T120 16 T180 16 T240 16 V32 H0Z" /></svg>
+                  <svg className={styles.liquidWaveFront} viewBox="0 0 240 32" preserveAspectRatio="none"><path d="M0 16 Q30 32 60 16 T120 16 T180 16 T240 16 V32 H0Z" /></svg>
+                  {waterFeedback.sequence > 0 && <div className={styles.bubbles}><i /><i /><i /><i /><i /><i /></div>}
+                </div>
               </div>
               <div className={styles.bottleGraduations}><span /><span /><span /><span /></div>
               <span className={styles.bottleEmblem}><Droplets size={25} strokeWidth={1.5} /></span>
