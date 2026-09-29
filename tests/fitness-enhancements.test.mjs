@@ -177,3 +177,37 @@ test('recorded actions preserve exact write times, log reversal and do not inven
   assert.equal(original.days['2026-09-28'],undefined);
   assert.equal(model.isFitnessData({...next,days:{'2026-09-28':{...next.days['2026-09-28'],activity:[{at:'bad',target:'water',label:'Test'}]}}}),false);
 });
+
+test('routine status distinguishes late, skipped and completed without granting progress', () => {
+  const date = '2026-09-28';
+  let data = model.initialData(routine);
+  const item = routine[0];
+  const status = (time) => model.routineStatus(model.getDay(data,date),item,date,new Date(date+'T'+time));
+  assert.equal(status('07:59:00'),'pending');
+  assert.equal(status('08:00:01'),'late');
+  const before = data;
+  data = model.setRoutineStatus(data,date,item.id,'skipped');
+  assert.equal(status('09:00:00'),'skipped');
+  assert.equal(model.routineProgress(model.getDay(data,date)).completed,0);
+  assert.ok(model.isFitnessData(data));
+  const logged = model.stampRecordedActions(before,data,1000);
+  assert.match(logged.days[date].activity.at(-1).label,/não feito/);
+  assert.equal(logged.days[date].activity.at(-1).at,1000);
+  data = model.setRoutineStatus(data,date,item.id,'completed');
+  assert.equal(status('09:00:00'),'completed');
+  assert.deepEqual(data.days[date].skipped,[]);
+  data = model.setRoutineStatus(data,date,item.id,'pending');
+  assert.equal(status('09:00:00'),'late');
+  assert.ok(model.isFitnessData(data));
+});
+
+test('skip validation rejects unknown IDs, duplicates and completion overlap', () => {
+  let data = model.setRoutineStatus(model.initialData(routine),'2026-09-28','breakfast','skipped');
+  for (const skipped of [['unknown'],['breakfast','breakfast']]) {
+    assert.equal(model.isFitnessData({...data,days:{'2026-09-28':{...data.days['2026-09-28'],skipped}}}),false);
+  }
+  assert.equal(model.isFitnessData({...data,days:{'2026-09-28':{...data.days['2026-09-28'],completed:['breakfast']}}}),false);
+  data = model.changePlan(data,'2026-09-28',routine.filter(item=>item.id!=='breakfast'));
+  assert.deepEqual(data.days['2026-09-28'].skipped,[]);
+  assert.ok(model.isFitnessData(data));
+});

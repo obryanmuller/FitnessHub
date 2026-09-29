@@ -19,6 +19,7 @@ export type Day = {
   routine: Routine[];
   exercises: Exercise[];
   completed: string[];
+  skipped?: string[];
   exerciseCompleted: string[];
   exerciseLogs?: Record<string, ExercisePerformance>;
   waterMl: number;
@@ -136,7 +137,8 @@ export function getDay(data: FitnessData, key: string): Day {
 }
 
 export function changeDay(data: FitnessData, key: string, change: (day: Day) => Day): FitnessData {
-  return { ...data, days: { ...data.days, [key]: change(getDay(data, key)) } };
+  const day = change(getDay(data, key));
+  return { ...data, days: { ...data.days, [key]: { ...day, ...(day.skipped ? { skipped: day.skipped.filter((id) => !day.completed.includes(id)) } : {}) } } };
 }
 
 export function toggleId(ids: string[], id: string): string[] {
@@ -185,6 +187,7 @@ export function changePlan(data: FitnessData, key: string, routine: Routine[], e
       [key]: {
         ...day, routine: dayRoutine, exercises: dayExercises,
         completed: day.completed.filter((id) => dayRoutine.some((item) => item.id === id)),
+        skipped: day.skipped?.filter((id) => dayRoutine.some((item) => item.id === id)),
         exerciseCompleted: day.exerciseCompleted.filter((id) => dayExercises.some((item) => item.id === id)),
         exerciseLogs: Object.fromEntries(Object.entries(day.exerciseLogs ?? {}).filter(([id]) => dayExercises.some((item) => item.id === id))),
       },
@@ -205,6 +208,7 @@ export function changeWorkoutDay(data: FitnessData, key: string, weekday: Weekda
       routine,
       exercises: plan.kind === "rest" ? [] : plan.exercises,
       completed: day.completed.filter((id) => routine.some((item) => item.id === id)),
+      skipped: day.skipped?.filter((id) => routine.some((item) => item.id === id)),
       exerciseCompleted: day.exerciseCompleted.filter((id) => plan.exercises.some((exercise) => exercise.id === id)),
       exerciseLogs: Object.fromEntries(Object.entries(day.exerciseLogs ?? {}).filter(([id]) => plan.exercises.some((exercise) => exercise.id === id))),
     } },
@@ -319,7 +323,8 @@ export function isFitnessData(value: unknown): value is FitnessData {
       || !Array.isArray(day.completed) || !Array.isArray(day.exerciseCompleted)) return false;
     const dayRoutine = day.routine;
     const dayExercises = day.exercises;
-    if (!day.completed.every((id) => dayRoutine.some((item) => item.id === id))
+    if (!(day.skipped === undefined || (Array.isArray(day.skipped) && new Set(day.skipped).size === day.skipped.length && day.skipped.every((id) => dayRoutine.some((item) => item.id === id) && !(day.completed as string[]).includes(id))))
+      || !day.completed.every((id) => dayRoutine.some((item) => item.id === id))
       || new Set(day.completed).size !== day.completed.length
       || !day.exerciseCompleted.every((id) => dayExercises.some((item) => item.id === id))
       || new Set(day.exerciseCompleted).size !== day.exerciseCompleted.length
@@ -477,7 +482,7 @@ export function stampRecordedActions(previous: FitnessData, next: FitnessData, n
     const activity: RecordedAction[] = [];
     const add = (target: string, label: string) => activity.push({ at: now, target, label });
     if (before.waterMl !== after.waterMl) add("water", "Água: " + (after.waterMl - before.waterMl > 0 ? "+" : "") + (after.waterMl - before.waterMl) + " ml · total " + after.waterMl + " ml");
-    for (const item of after.routine) if (before.completed.includes(item.id) !== after.completed.includes(item.id)) add("routine:" + item.id, item.title + (after.completed.includes(item.id) ? " concluído" : " reaberto"));
+    for (const item of after.routine) if (before.completed.includes(item.id) !== after.completed.includes(item.id) || !!before.skipped?.includes(item.id) !== !!after.skipped?.includes(item.id)) add("routine:" + item.id, item.title + (after.completed.includes(item.id) ? " concluído" : after.skipped?.includes(item.id) ? " marcado como não feito" : " reaberto"));
     for (const item of after.exercises) {
       if (before.exerciseCompleted.includes(item.id) !== after.exerciseCompleted.includes(item.id)) add("exercise:" + item.id, item.name + (after.exerciseCompleted.includes(item.id) ? " concluído" : " reaberto"));
       if (JSON.stringify(before.exerciseLogs?.[item.id]) !== JSON.stringify(after.exerciseLogs?.[item.id]) && after.exerciseLogs?.[item.id]) add("performance:" + item.id, "Desempenho de " + item.name + " registrado");
@@ -497,4 +502,17 @@ export function stampRecordedActions(previous: FitnessData, next: FitnessData, n
     if (activity.length) days[date] = { ...after, activity: [...(after.activity ?? []), ...activity].slice(-500) };
   }
   return { ...next, days };
+}
+
+export function setRoutineStatus(data: FitnessData, date: string, id: string, status: "pending" | "completed" | "skipped"): FitnessData {
+  return changeDay(data, date, (day) => {
+    if (!day.routine.some((item) => item.id === id)) return day;
+    return { ...day, completed: [...day.completed.filter((value) => value !== id), ...(status === "completed" ? [id] : [])],
+      skipped: [...(day.skipped ?? []).filter((value) => value !== id), ...(status === "skipped" ? [id] : [])] };
+  });
+}
+export function routineStatus(day: Day, item: Routine, date: string, now: Date): "completed" | "skipped" | "late" | "pending" {
+  if (day.completed.includes(item.id)) return "completed";
+  if (day.skipped?.includes(item.id)) return "skipped";
+  return now.getTime() > new Date(date + "T" + item.time + ":00").getTime() ? "late" : "pending";
 }

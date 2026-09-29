@@ -53,3 +53,8 @@ test("an ongoing guided workout does not receive a start reminder", () => {
   data=model.startWorkout(data,"2026-09-28",1000);
   assert.equal(policy.scheduledReminders(data,settings,"2026-09-28",540).length,0);
 });
+
+test('explicitly skipped tasks suppress their reminders', () => {
+  const data=model.setRoutineStatus(model.initialData(routine),'2026-09-28','meal','skipped');
+  assert.equal(policy.scheduledReminders(data,{...settings,water:false},'2026-09-28',480).length,0);
+});

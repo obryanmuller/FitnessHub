@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, Droplets, Dumbbell, Flame, Activity, Plus, Scale, Sun, Utensils, Waves } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { StatusPill } from "@/components/ui/status-pill";
 import { useFitness, saveFitness } from "@/features/fitness/store";
-import { isOptionalRoutine, routineProgress, changeDay, dayKey, getDay, streak, toggleId, workoutPlanForDate, WORKOUT_ID, type Routine } from "@/features/fitness/model";
+import { routineStatus, setRoutineStatus, isOptionalRoutine, routineProgress, changeDay, dayKey, getDay, streak, workoutPlanForDate, WORKOUT_ID, type Routine } from "@/features/fitness/model";
 import { UndoNotice, useQuickUndo } from "@/features/fitness/quick-undo";
 import { ActivityLog, actionTime } from "@/features/fitness/activity-log";
 import { formatDateLong } from "@/lib/date";
@@ -17,6 +17,14 @@ export function TodayPage() {
   const { data, today } = useFitness();
   const [waterFeedback, setWaterFeedback] = useState({ sequence: 0, amount: 0, reachedGoal: false });
   const undo = useQuickUndo();
+  const [clock, setClock] = useState(() => new Date());
+  useEffect(() => {
+    const refresh = () => setClock(new Date());
+    const timer = window.setInterval(refresh, 15000);
+    window.addEventListener("focus", refresh);
+    document.addEventListener("visibilitychange", refresh);
+    return () => { window.clearInterval(timer); window.removeEventListener("focus", refresh); document.removeEventListener("visibilitychange", refresh); };
+  }, []);
   const day = getDay(data, today);
   const bottleMl = data.profile.bottleMl;
   const completedItems = new Set(day.completed);
@@ -27,18 +35,20 @@ export function TodayPage() {
   const waterProgress = waterConsumedMl >= waterGoal ? 100 : Math.min(99, Math.round(waterConsumedMl / waterGoal * 100));
   const workoutDone = completedItems.has(WORKOUT_ID);
   const restDay = workoutPlanForDate(data, today).kind === "rest";
-  const nextItem = day.routine.find((item) => !isOptionalRoutine(item) && !completedItems.has(item.id));
+  const nextItem = day.routine.find((item) => !isOptionalRoutine(item) && !completedItems.has(item.id) && !day.skipped?.includes(item.id));
   const currentDate = formatDateLong(new Date(today + "T12:00:00"));
   const daysInRow = streak(data, today);
   const lastWeight = [...data.weights].sort((a, b) => b.date.localeCompare(a.date))[0];
-  function toggleRoutineItem(item: Routine) {
+  function changeRoutineStatus(item: Routine, status: "pending" | "completed" | "skipped") {
     const date = dayKey();
-    const wasCompleted = getDay(data, date).completed.includes(item.id);
-    if (saveFitness((current) => changeDay(current, date, (value) => ({ ...value, completed: toggleId(value.completed, item.id) })))) {
-      undo.remember(item.title + (wasCompleted ? " reaberto." : " concluído."), (current) => changeDay(current, date, (value) => ({
-        ...value, completed: value.routine.some((entry) => entry.id === item.id) ? [...value.completed.filter((id) => id !== item.id), ...(wasCompleted ? [item.id] : [])] : value.completed,
-      })));
+    const currentDay = getDay(data, date);
+    const previous = currentDay.completed.includes(item.id) ? "completed" : currentDay.skipped?.includes(item.id) ? "skipped" : "pending";
+    if (saveFitness((current) => setRoutineStatus(current, date, item.id, status))) {
+      undo.remember(item.title + (status === "completed" ? " concluído." : status === "skipped" ? " marcado como não feito." : " reaberto."), (current) => setRoutineStatus(current, date, item.id, previous));
     }
+  }
+  function toggleRoutineItem(item: Routine) {
+    changeRoutineStatus(item, completedItems.has(item.id) ? "pending" : "completed");
   }
   function addWater(amount: number) {
     const date = dayKey();
@@ -92,11 +102,11 @@ export function TodayPage() {
             </div>
             <time>{nextItem.time}</time>
           </div>
-          <p className={styles.nextActionEntries}>{nextItem.entries.join(" · ")}</p>
+          <p className={styles.nextActionEntries}>{nextItem.entries.join(" · ")}</p>{routineStatus(day, nextItem, today, clock) === "late" && <span className={styles.lateBadge}>Atrasado</span>}
           <button type="button" className={styles.nextActionButton} onClick={() => toggleRoutineItem(nextItem)}>
             <Check size={18} aria-hidden="true" />
             Marcar como concluído
-          </button>
+          </button><button type="button" className={styles.skipButton} onClick={() => changeRoutineStatus(nextItem, "skipped")}>Não feito</button>
         </Card>
       ) : (
         <Card className={styles.nextAction} aria-labelledby="next-task-title">
@@ -104,10 +114,10 @@ export function TodayPage() {
             <span className={styles.nextActionIcon} aria-hidden="true"><Check size={20} /></span>
             <div>
               <p>Próxima tarefa</p>
-              <h2 id="next-task-title">{totalItems ? "Rotina obrigatória em dia" : "Sem etapas obrigatórias"}</h2>
+              <h2 id="next-task-title">{totalItems ? completedCount === totalItems ? "Rotina obrigatória em dia" : "Sem etapas obrigatórias pendentes" : "Sem etapas obrigatórias"}</h2>
             </div>
           </div>
-          <p className={styles.nextActionEntries}>Dia cuidado, etapa por etapa. Muito bem!</p>
+          <p className={styles.nextActionEntries}>{completedCount === totalItems ? "Confira os detalhes na sua rotina abaixo." : "Itens marcados como não feitos continuam disponíveis para revisão."}</p>
         </Card>
       )}
 
@@ -162,6 +172,7 @@ export function TodayPage() {
         <ol className={styles.timeline}>
           {day.routine.map((item) => {
             const completed = completedItems.has(item.id);
+            const status = routineStatus(day, item, today, clock);
             const recorded = [...(day.activity ?? [])].reverse().find((event) => event.target === "routine:" + item.id);
             const isNext = nextItem?.id === item.id;
             const isWorkout = item.id === WORKOUT_ID;
@@ -171,7 +182,7 @@ export function TodayPage() {
                 <span className={styles.marker} aria-hidden="true">{completed ? <Check size={16} /> : <Icon size={16} />}</span>
                 <label className={styles.routineLabel}>
                   <span className={styles.itemContent}>
-                    <span className={styles.itemMeta}><time>{item.time}</time>{isNext && <span className={styles.nextBadge}>A seguir</span>}{isOptionalRoutine(item) && <span className={styles.nextBadge}>Opcional</span>}{completed && <span className={styles.doneText}>Concluído{recorded ? " às " + actionTime(recorded.at) : ""}</span>}</span>
+                    <span className={styles.itemMeta}><time>{item.time}</time>{status === "late" && <span className={styles.lateBadge}>Atrasado</span>}{status === "skipped" && <span className={styles.skippedBadge}>Não feito{recorded ? " às " + actionTime(recorded.at) : ""}</span>}{isNext && <span className={styles.nextBadge}>A seguir</span>}{isOptionalRoutine(item) && <span className={styles.nextBadge}>Opcional</span>}{completed && <span className={styles.doneText}>Concluído{recorded ? " às " + actionTime(recorded.at) : ""}</span>}</span>
                     <span className={styles.itemTitle}>{item.title}</span>
                     <span className={styles.entries}>{item.entries.map((entry, index) => <span key={index}>{index > 0 && <span aria-hidden="true"> · </span>}{entry}</span>)}</span>
                   </span>
@@ -180,6 +191,7 @@ export function TodayPage() {
                     <span className={styles.checkboxFace} aria-hidden="true"><Check size={16} strokeWidth={3} /></span>
                   </span>
                 </label>
+                <button type="button" className={styles.skipButton} aria-label={(status === "skipped" ? "Reabrir " : "Marcar como não feito: ") + item.title} onClick={() => changeRoutineStatus(item, status === "skipped" ? "pending" : "skipped")}>{status === "skipped" ? "Voltar a pendente" : "Não feito"}</button>
               </li>
             );
           })}

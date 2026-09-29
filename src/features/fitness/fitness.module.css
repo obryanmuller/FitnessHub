@@ -157,3 +157,4 @@
 .activityLog li { display: flex; flex-direction: column; gap: 5px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 13px; overflow-wrap: anywhere; }
 .activityLog time { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
 @media (prefers-reduced-motion: reduce) { .undoCountdown { animation: none; } }
+.recordCheck select { width: 120px; flex-shrink: 0; }

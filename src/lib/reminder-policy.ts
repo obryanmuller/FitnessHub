@@ -39,7 +39,7 @@ export function scheduledReminders(data: FitnessData, preferences: NotificationS
   const result: Reminder[] = [];
   for (const item of day.routine) {
     const workout = item.id === WORKOUT_ID;
-    if (day.completed.includes(item.id) || (workout && (plan.kind === "rest" || day.session))) continue;
+    if (day.completed.includes(item.id) || day.skipped?.includes(item.id) || (workout && (plan.kind === "rest" || day.session))) continue;
     if (!(workout ? settings.workout : settings.meals)) continue;
     const scheduled = minutesOf(item.time);
     if (minutes < scheduled || minutes - scheduled >= 10) continue;
