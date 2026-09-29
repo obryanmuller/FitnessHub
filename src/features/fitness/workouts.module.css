@@ -25,3 +25,6 @@
 
 .dayTabs { padding: 8px; border: 1px solid var(--line); border-radius: var(--radius-card); background: var(--surface); }
 .dayTabs button { border-radius: var(--radius-card); height: 58px; }
+
+.planControls { min-width: 0; border: 0; margin: 0; padding: 0; }
+.planControls:disabled { opacity: .6; }

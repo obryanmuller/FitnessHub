@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { changeDay, getDay, validDate } from "./model";
+import { isOptionalRoutine, changeDay, getDay, validDate } from "./model";
 import { saveFitness, useFitness } from "./store";
 import { UndoNotice, useQuickUndo } from "./quick-undo";
+import { SessionSummary } from "./workout-session";
+import { ActivityLog } from "./activity-log";
 import styles from "./fitness.module.css";
 
 export function HistoryEditor() {
@@ -16,6 +18,8 @@ export function HistoryEditor() {
     <label>Data do registro<input type="date" value={date} min="1900-01-01" max={today} required onChange={(event) => { setDate(event.target.value); undo.dismiss(); }} /></label>
     {validDate(date) && date <= today ? <DayEditor key={activeProfileId + date + JSON.stringify(data.days[date])} date={date} onSave={undo.remember} /> : <p role="status">Escolha uma data válida até hoje.</p>}
     {!data.days[date] && validDate(date) && date <= today && <p className={styles.hint}>Sem registro anterior: usamos o plano atual como base. Marque apenas o que realizou nesse dia.</p>}
+    {data.days[date]?.session?.finishedAt !== undefined && <SessionSummary session={data.days[date].session!} date={date} />}
+    <ActivityLog date={date} />
     <UndoNotice action={undo} />
   </section>;
 }
@@ -48,7 +52,7 @@ function DayEditor({ date, onSave }: { date: string; onSave: ReturnType<typeof u
   return <form className={styles.form} onSubmit={submit}>
     <h3>{date.split("-").reverse().join("/")} {date === today ? "· Hoje" : "· Registro anterior"}</h3>
     <label>Água consumida (ml)<input name="water" type="number" min={0} max={100000} step={1} defaultValue={day.waterMl} required /></label>
-    <fieldset className={styles.recordGroup}><legend>Refeições e treino</legend>{day.routine.map((item) => <label key={item.id} className={styles.recordCheck}><input name="routine" type="checkbox" value={item.id} defaultChecked={day.completed.includes(item.id)} /><span>{item.time} · {item.title}</span></label>)}</fieldset>
+    <fieldset className={styles.recordGroup}><legend>Refeições e treino</legend>{day.routine.map((item) => <label key={item.id} className={styles.recordCheck}><input name="routine" type="checkbox" value={item.id} defaultChecked={day.completed.includes(item.id)} /><span>{item.time} · {item.title}{isOptionalRoutine(item) ? " · Opcional" : ""}</span></label>)}</fieldset>
     {day.exercises.length > 0 && <fieldset className={styles.recordGroup}><legend>Exercícios realizados</legend>{day.exercises.map((item) => <label key={item.id} className={styles.recordCheck}><input type="checkbox" name="exercise" value={item.id} defaultChecked={day.exerciseCompleted.includes(item.id)} /><span>{item.name}</span></label>)}</fieldset>}
     <p className={styles.hint}>Marcar exercícios não conclui o treino automaticamente. Cargas já registradas são preservadas.</p>
     <button className={styles.primary} type="submit">Salvar registros deste dia</button>

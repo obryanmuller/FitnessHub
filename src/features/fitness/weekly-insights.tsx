@@ -3,6 +3,7 @@
 import { Award, CalendarDays, Droplets, Dumbbell, Scale } from "lucide-react";
 import { achievements, weeklySummary, weeklyComparison, exerciseHistory } from "./model";
 import { useFitness } from "./store";
+import { FrequencyGoal } from "./frequency-goal";
 import styles from "./weekly-insights.module.css";
 
 const number = (value: number) => value.toLocaleString("pt-BR", { maximumFractionDigits: 1 });
@@ -15,6 +16,7 @@ export function WeeklyInsights() {
   const loads = [...exercises.values()].map((exercise) => ({ exercise, history: exerciseHistory(data, exercise.id).filter((entry) => entry.date <= today) })).filter((item) => item.history.length >= 2).sort((a, b) => b.history[0].date.localeCompare(a.history[0].date)).slice(0, 5);
   const earned = achievements(data, today);
   return <>
+    <FrequencyGoal />
     <section className={styles.section} aria-labelledby="weekly-title">
       <div className={styles.heading}><div><span>ESTA SEMANA</span><h2 id="weekly-title">Seu resumo</h2></div><CalendarDays size={21} aria-hidden="true" /></div>
       <div className={styles.grid}>

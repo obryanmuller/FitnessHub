@@ -1,0 +1,18 @@
+﻿.panel { padding: 22px; margin: 24px 0; border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: var(--radius-card); background: var(--surface); }
+.panel h2 { margin-top: 8px; }
+.metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+.metrics span { color: var(--muted); font-size: 12px; }
+.metrics strong { display: block; font-size: 30px; font-weight: 750; font-variant-numeric: tabular-nums; color: var(--ink); }
+.rest { display: flex; gap: 12px; align-items: center; margin: 18px 0; padding: 16px; background: #dde5e9; border-radius: var(--radius-control); color: #36566c; }
+.rest span { flex: 1; font-size: 13px; }
+.rest strong { display: block; font-size: 28px; font-variant-numeric: tabular-nums; }
+.panel .restSelect { flex: 1; min-width: 140px; margin: 0; }
+.setForm { margin: 20px 0; padding: 18px 0; border-block: 1px solid var(--line); }
+.setForm h3 { font-size: 20px; margin: 10px 0; }
+.setList { list-style: none; margin: 12px 0 24px; padding: 0; }
+.setList li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+.setList button { min-height: 44px; padding: 8px; color: var(--accent); text-decoration: underline; }
+.summaryExercise { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 16px; overflow-wrap: anywhere; }
+.summaryExercise > p { font-size: 13px; line-height: 1.8; }
+.confirm { padding: 16px; margin-top: 16px; border: 1px solid var(--line); border-radius: var(--radius-control); font-size: 13px; line-height: 1.7; background: #eee8dc; }
+@media (max-width: 420px) { .panel { padding: 16px; } .rest { flex-wrap: wrap; padding: 12px; } .metrics strong { font-size: 26px; } }

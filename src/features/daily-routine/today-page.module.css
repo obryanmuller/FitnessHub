@@ -213,3 +213,5 @@
 .itemMeta, .summary span, .summary small, .kicker { font-size: 11px; }
 .hydrationLabel { font-size: 10px; }
 @media (max-width: 420px) { .hydrationDisplay { grid-template-columns: 96px minmax(0, 1fr); gap: 14px; } .bottleStage { width: 96px; } .water { padding: 18px; } .hydrationReadout > strong { font-size: 30px; } .waterButton { font-size: 12px; } }
+
+.activitySection { grid-column: 1 / -1; min-width: 0; }

@@ -2,24 +2,7 @@ import "server-only";
 
 import webPush from "web-push";
 
-export type NotificationSettings = {
-  meals: boolean;
-  workout: boolean;
-  water: boolean;
-};
-
-export const defaultNotificationSettings: NotificationSettings = {
-  meals: true,
-  workout: true,
-  water: false,
-};
-
-export function isNotificationSettings(value: unknown): value is NotificationSettings {
-  return !!value && typeof value === "object"
-    && typeof (value as NotificationSettings).meals === "boolean"
-    && typeof (value as NotificationSettings).workout === "boolean"
-    && typeof (value as NotificationSettings).water === "boolean";
-}
+export { defaultNotificationSettings, isNotificationSettings, type NotificationSettings } from "./reminder-policy";
 
 export function vapidPublicKey(): string {
   const value = process.env.VAPID_PUBLIC_KEY;

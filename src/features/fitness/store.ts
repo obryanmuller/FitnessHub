@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { todayDashboardMock } from "@/data/today-dashboard";
-import { dayKey, initialData, isFitnessData, upgradeFitnessData, type FitnessData } from "./model";
+import { dayKey, stampRecordedActions, initialData, isFitnessData, upgradeFitnessData, type FitnessData } from "./model";
 
 const LEGACY_STORAGE_KEY = "fitnesshub.personal.v1";
 const ACTIVE_PROFILE_KEY = "fitnesshub.active-profile.v1";
@@ -157,10 +157,11 @@ function persist(profileId: string, data: FitnessData) {
 }
 
 export function saveFitness(update: (data: FitnessData) => FitnessData, _replace = false): boolean {
-  void _replace;
+
   if (!snapshot.ready || !snapshot.activeProfileId) return false;
   try {
-    const next = upgradeFitnessData(update(snapshot.data));
+    const updated = upgradeFitnessData(update(snapshot.data));
+    const next = _replace ? updated : stampRecordedActions(snapshot.data, updated, Date.now());
     if (!isFitnessData(next)) throw new Error("Os dados informados são inválidos.");
     const profileId = snapshot.activeProfileId;
     const profiles = snapshot.profiles.map((profile) => profile.id === profileId ? { ...profile, name: next.profile.name } : profile);

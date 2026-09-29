@@ -1,7 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { database } from "@/lib/database";
-import { isFitnessData, workoutPlanForDate, WORKOUT_ID, type Routine, type WorkoutDayPlan } from "@/features/fitness/model";
-import { isNotificationSettings, sendPush, type NotificationSettings } from "@/lib/push-notifications";
+import { isFitnessData } from "@/features/fitness/model";
+import { isNotificationSettings, sendPush } from "@/lib/push-notifications";
 
 type SubscriptionRow = {
   id: string;
@@ -12,7 +12,7 @@ type SubscriptionRow = {
   settings: unknown;
   data: unknown;
 };
-type Reminder = { key: string; title: string; body: string; url: string };
+import { scheduledReminders, type Reminder } from "@/lib/reminder-policy";
 
 function authorized(request: Request): boolean {
   const secret = process.env.CRON_SECRET;
@@ -30,44 +30,13 @@ function localNow(timezone: string) {
   return { date: `${get("year")}-${get("month")}-${get("day")}`, minutes: Number(get("hour")) * 60 + Number(get("minute")) };
 }
 
-function due(now: number, time: string): boolean {
-  const [hour, minute] = time.split(":").map(Number);
-  const scheduled = hour * 60 + minute;
-  return now >= scheduled && now - scheduled < 10;
-}
-
-function routineReminder(date: string, item: Routine, workout: boolean, plan?: WorkoutDayPlan): Reminder {
-  return {
-    key: `${date}:routine:${item.id}:${item.time}`,
-    title: workout ? `Hora de ${plan?.title ?? "treinar"}` : item.title,
-    body: workout
-      ? (plan?.kind === "cardio" ? "Seu cardio está esperando." : `${plan?.exercises.length ?? 0} exercícios na ficha de hoje.`)
-      : `Sua rotina de ${item.title.toLocaleLowerCase("pt-BR")} está esperando.`,
-    url: workout ? "/#treinos" : "/#hoje",
-  };
-}
-
 function reminders(row: SubscriptionRow): Reminder[] {
   if (!isFitnessData(row.data) || !isNotificationSettings(row.settings)) return [];
-  const settings: NotificationSettings = row.settings;
-  const now = localNow(row.timezone);
-  const result: Reminder[] = [];
-  for (const item of row.data.routine) {
-    const workout = item.id === WORKOUT_ID;
-    const plan = workout ? workoutPlanForDate(row.data, now.date) : undefined;
-    if (workout && plan?.kind === "rest") continue;
-    const scheduledItem = workout && plan?.time ? { ...item, time: plan.time } : item;
-    if (due(now.minutes, scheduledItem.time) && ((workout && settings.workout) || (!workout && settings.meals))) {
-      result.push(routineReminder(now.date, scheduledItem, workout, plan));
-    }
-  }
-  if (settings.water && now.minutes >= 8 * 60 && now.minutes <= 20 * 60 && (now.minutes - 8 * 60) % 120 < 10) {
-    const slot = Math.floor((now.minutes - 8 * 60) / 120);
-    result.push({ key: `${now.date}:water:${slot}`, title: "Hora de beber água", body: "Uma pausa rápida para cuidar da sua hidratação.", url: "/#hoje" });
-  }
-  return result;
+  try {
+    const now = localNow(row.timezone);
+    return scheduledReminders(row.data, row.settings, now.date, now.minutes);
+  } catch { return []; }
 }
-
 async function dispatch(request: Request) {
   if (!authorized(request)) return Response.json({ error: "Não autorizado." }, { status: 401 });
   try {

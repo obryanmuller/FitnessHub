@@ -148,3 +148,12 @@
 .page :is(input, textarea, select):focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 @media (min-width: 1000px) { .undoNotice { left: 248px; bottom: 24px; } }
 @media (max-width: 420px) { .page .form, .page .hero, .page .backup, .page .identity { padding: 18px; } .page .row { gap: 8px; } .page .actions > button { flex-basis: 120px; } }
+
+.undoCountdown { position: absolute; left: 0; bottom: 0; width: 100%; height: 3px; background: var(--accent); transform-origin: left; animation: undoExpiry 2s linear forwards; }
+@keyframes undoExpiry { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+.activityLog { margin: 24px 0; padding: 18px; border: 1px solid var(--line); border-radius: var(--radius-card); background: var(--surface); }
+.activityLog summary { min-height: 44px; cursor: pointer; font-size: 14px; font-weight: 650; }
+.activityLog ol { list-style: none; margin: 0; padding: 0; max-height: 360px; overflow-y: auto; }
+.activityLog li { display: flex; flex-direction: column; gap: 5px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 13px; overflow-wrap: anywhere; }
+.activityLog time { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) { .undoCountdown { animation: none; } }

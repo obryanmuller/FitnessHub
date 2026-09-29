@@ -5,8 +5,9 @@ import { Check, Droplets, Dumbbell, Flame, Activity, Plus, Scale, Sun, Utensils,
 import { Card } from "@/components/ui/card";
 import { StatusPill } from "@/components/ui/status-pill";
 import { useFitness, saveFitness } from "@/features/fitness/store";
-import { changeDay, dayKey, getDay, streak, toggleId, workoutPlanForDate, WORKOUT_ID, type Routine } from "@/features/fitness/model";
+import { isOptionalRoutine, routineProgress, changeDay, dayKey, getDay, streak, toggleId, workoutPlanForDate, WORKOUT_ID, type Routine } from "@/features/fitness/model";
 import { UndoNotice, useQuickUndo } from "@/features/fitness/quick-undo";
+import { ActivityLog, actionTime } from "@/features/fitness/activity-log";
 import { formatDateLong } from "@/lib/date";
 import styles from "./today-page.module.css";
 
@@ -19,14 +20,14 @@ export function TodayPage() {
   const day = getDay(data, today);
   const bottleMl = data.profile.bottleMl;
   const completedItems = new Set(day.completed);
-  const completedCount = completedItems.size;
-  const totalItems = day.routine.length;
+  const { completed: completedCount, total: totalItems } = routineProgress(day);
+
   const waterConsumedMl = day.waterMl;
   const waterGoal = day.waterGoal;
   const waterProgress = waterConsumedMl >= waterGoal ? 100 : Math.min(99, Math.round(waterConsumedMl / waterGoal * 100));
   const workoutDone = completedItems.has(WORKOUT_ID);
   const restDay = workoutPlanForDate(data, today).kind === "rest";
-  const nextItem = day.routine.find((item) => !completedItems.has(item.id));
+  const nextItem = day.routine.find((item) => !isOptionalRoutine(item) && !completedItems.has(item.id));
   const currentDate = formatDateLong(new Date(today + "T12:00:00"));
   const daysInRow = streak(data, today);
   const lastWeight = [...data.weights].sort((a, b) => b.date.localeCompare(a.date))[0];
@@ -71,7 +72,7 @@ export function TodayPage() {
         </p>
         <div className={styles.dailyProgress}>
           <div className={styles.progressRing} style={{ background: `conic-gradient(#536440 ${totalItems ? completedCount / totalItems * 100 : 0}%, #c8d0bd 0)` }} aria-hidden="true"><span>{totalItems ? Math.round(completedCount / totalItems * 100) : 0}<small>%</small></span></div>
-          <div><p>CONSISTÊNCIA DIÁRIA</p><strong>Mantenha o ritmo.</strong><span>{completedCount} de {totalItems} etapas concluídas hoje</span></div>
+          <div><p>CONSISTÊNCIA DIÁRIA</p><strong>Mantenha o ritmo.</strong><span>{completedCount} de {totalItems} etapas obrigatórias concluídas</span></div>
         </div>
       </header>
 
@@ -103,7 +104,7 @@ export function TodayPage() {
             <span className={styles.nextActionIcon} aria-hidden="true"><Check size={20} /></span>
             <div>
               <p>Próxima tarefa</p>
-              <h2 id="next-task-title">Tudo concluído por hoje</h2>
+              <h2 id="next-task-title">{totalItems ? "Rotina obrigatória em dia" : "Sem etapas obrigatórias"}</h2>
             </div>
           </div>
           <p className={styles.nextActionEntries}>Dia cuidado, etapa por etapa. Muito bem!</p>
@@ -156,11 +157,12 @@ export function TodayPage() {
       <section aria-labelledby="routine-title" className={styles.routine}>
         <div className={styles.sectionHeading}>
           <div><p className={styles.kicker}>UM PASSO DE CADA VEZ</p><h2 id="routine-title">Seu dia</h2></div>
-          <StatusPill tone={completedCount === totalItems ? "green" : "slate"}>{completedCount} de {totalItems}</StatusPill>
+          <StatusPill tone={totalItems > 0 && completedCount === totalItems ? "green" : "slate"}>{completedCount} de {totalItems}</StatusPill>
         </div>
         <ol className={styles.timeline}>
           {day.routine.map((item) => {
             const completed = completedItems.has(item.id);
+            const recorded = [...(day.activity ?? [])].reverse().find((event) => event.target === "routine:" + item.id);
             const isNext = nextItem?.id === item.id;
             const isWorkout = item.id === WORKOUT_ID;
             const Icon = isWorkout ? Dumbbell : Utensils;
@@ -169,7 +171,7 @@ export function TodayPage() {
                 <span className={styles.marker} aria-hidden="true">{completed ? <Check size={16} /> : <Icon size={16} />}</span>
                 <label className={styles.routineLabel}>
                   <span className={styles.itemContent}>
-                    <span className={styles.itemMeta}><time>{item.time}</time>{isNext && <span className={styles.nextBadge}>A seguir</span>}{completed && <span className={styles.doneText}>Concluído</span>}</span>
+                    <span className={styles.itemMeta}><time>{item.time}</time>{isNext && <span className={styles.nextBadge}>A seguir</span>}{isOptionalRoutine(item) && <span className={styles.nextBadge}>Opcional</span>}{completed && <span className={styles.doneText}>Concluído{recorded ? " às " + actionTime(recorded.at) : ""}</span>}</span>
                     <span className={styles.itemTitle}>{item.title}</span>
                     <span className={styles.entries}>{item.entries.map((entry, index) => <span key={index}>{index > 0 && <span aria-hidden="true"> · </span>}{entry}</span>)}</span>
                   </span>
@@ -182,10 +184,11 @@ export function TodayPage() {
             );
           })}
         </ol>
-        {completedCount === totalItems && <p className={styles.allDone}>Dia cuidado, etapa por etapa. Muito bem!</p>}
+        {totalItems > 0 && completedCount === totalItems && <p className={styles.allDone}>Dia cuidado, etapa por etapa. Muito bem!</p>}
       </section>
 
       <section className={styles.weight} aria-label="Último registro de peso"><span className={styles.weightIcon}><Scale size={20} aria-hidden="true" /></span><div><h2>Seu progresso</h2><p>Último registro de peso</p></div><strong>{lastWeight ? <>{number(lastWeight.kg)} <small>kg</small></> : <small>Sem registro</small>}</strong></section>
+      <div className={styles.activitySection}><ActivityLog date={today} /></div>
       <p className={styles.footer}>Treino, nutrição e constância. Todos os dias.</p>
     </main>
   );

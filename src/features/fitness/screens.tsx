@@ -2,7 +2,7 @@
 
 import { useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Check, Download, Dumbbell, Flame, Activity, Pencil, Plus, Scale, Trash2, Upload, Utensils } from "lucide-react";
-import { changeDay, changePlan, dayKey, isFitnessData, streak, workoutExerciseCount, WORKOUT_ID, type FitnessData, type Routine } from "./model";
+import { isOptionalRoutine, changeDay, changePlan, dayKey, isFitnessData, streak, workoutExerciseCount, WORKOUT_ID, type FitnessData, type Routine } from "./model";
 import { saveFitness, useFitness } from "./store";
 import { ProfileManager } from "./profile-manager";
 import { NotificationSettings } from "./notification-settings";
@@ -36,7 +36,7 @@ export function Meals() {
     event.preventDefault();
     if (!editing) return;
     const form = new FormData(event.currentTarget);
-    const item = { id: editing.id, title: read(form, "title"), time: read(form, "time"), entries: read(form, "entries").split("\n").map((line) => line.trim()).filter(Boolean) };
+    const item = { optional: form.get("optional") === "on", id: editing.id, title: read(form, "title"), time: read(form, "time"), entries: read(form, "entries").split("\n").map((line) => line.trim()).filter(Boolean) };
     if (!item.title || !item.entries.length || item.entries.length > 50 || item.entries.some((entry) => entry.length > 300)) { setNotice("Preencha o nome e até 50 alimentos, com no máximo 300 caracteres por linha."); return; }
     const ok = saveFitness((current) => changePlan(current, dayKey(), current.routine.some((r) => r.id === item.id) ? current.routine.map((r) => r.id === item.id ? item : r) : [...current.routine, item]));
     if (ok) { setEditing(null); setNotice("Refeição salva. Sua rotina de hoje já foi atualizada."); }
@@ -44,10 +44,10 @@ export function Meals() {
   return <main className={styles.page}>
     <Heading eyebrow="ENERGIA PARA O SEU DIA" title="Alimentação" description="Seu plano, do café da manhã à última refeição." icon={<Utensils size={22} aria-hidden="true" />} />
     <div className={styles.sectionHeading}><h2>{meals.length} refeições no plano</h2><button className={styles.add} type="button" disabled={data.routine.length >= 100} onClick={() => { setEditing({ id: createId(), time: "12:00", title: "", entries: [] }); setNotice(""); }}><Plus size={16} /> Adicionar</button></div>
-    {editing && <form key={editing.id} className={styles.form} onSubmit={submit}><h2>{meals.some((item) => item.id === editing.id) ? "Editar refeição" : "Nova refeição"}</h2><label>Nome<input name="title" defaultValue={editing.title} maxLength={80} required autoFocus placeholder="Ex.: Lanche da tarde" /></label><label>Horário<input name="time" type="time" defaultValue={editing.time} required /></label><label>Alimentos · um por linha<textarea name="entries" rows={4} defaultValue={editing.entries.join("\n")} maxLength={5000} required placeholder={"Iogurte natural\nUma fruta"} /></label><p className={styles.hint}>As mudanças valem a partir de hoje. Os dias anteriores ficam preservados.</p><FormActions cancel={() => setEditing(null)} /></form>}
+    {editing && <form key={editing.id} className={styles.form} onSubmit={submit}><h2>{meals.some((item) => item.id === editing.id) ? "Editar refeição" : "Nova refeição"}</h2><label>Nome<input name="title" defaultValue={editing.title} maxLength={80} required autoFocus placeholder="Ex.: Lanche da tarde" /></label><label>Horário<input name="time" type="time" defaultValue={editing.time} required /></label><label className={styles.recordCheck}><input type="checkbox" name="optional" defaultChecked={isOptionalRoutine(editing)} /> Opcional · não conta no progresso diário</label><label>Alimentos · um por linha<textarea name="entries" rows={4} defaultValue={editing.entries.join("\n")} maxLength={5000} required placeholder={"Iogurte natural\nUma fruta"} /></label><p className={styles.hint}>As mudanças valem a partir de hoje. Os dias anteriores ficam preservados.</p><FormActions cancel={() => setEditing(null)} /></form>}
     <Notice>{notice}</Notice>
     {meals.length === 0 && <div className={styles.empty}><Utensils aria-hidden="true" /><h2>Um plano do seu jeito</h2><p>Adicione sua primeira refeição com os alimentos e o horário que você já segue.</p></div>}
-    <ol className={styles.list}>{meals.map((item) => <li key={item.id}><div className={styles.row}><span className={styles.time}>{item.time}</span><div className={styles.grow}><h3>{item.title}</h3><p>{item.entries.join(" · ")}</p></div><button type="button" className={styles.iconButton} aria-label={`Editar ${item.title}`} onClick={() => setEditing(item)}><Pencil size={17} /></button></div><div className={styles.rowEnd}><Remove label={item.title} onRemove={() => { if (saveFitness((current) => changePlan(current, dayKey(), current.routine.filter((r) => r.id !== item.id)))) { if (editing?.id === item.id) setEditing(null); setNotice("Refeição removida do plano."); } }} /></div></li>)}</ol>
+    <ol className={styles.list}>{meals.map((item) => <li key={item.id}><div className={styles.row}><span className={styles.time}>{item.time}</span><div className={styles.grow}><h3>{item.title}{isOptionalRoutine(item) && <span className={styles.tag}> · Opcional</span>}</h3><p>{item.entries.join(" · ")}</p></div><button type="button" className={styles.iconButton} aria-label={`Editar ${item.title}`} onClick={() => setEditing(item)}><Pencil size={17} /></button></div><div className={styles.rowEnd}><Remove label={item.title} onRemove={() => { if (saveFitness((current) => changePlan(current, dayKey(), current.routine.filter((r) => r.id !== item.id)))) { if (editing?.id === item.id) setEditing(null); setNotice("Refeição removida do plano."); } }} /></div></li>)}</ol>
   </main>;
 }
 

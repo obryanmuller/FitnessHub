@@ -1,0 +1,12 @@
+﻿.panel { margin: 28px 0; padding: 22px; border: 1px solid var(--line); border-radius: var(--radius-card); background: var(--surface); }
+.goalForm { display: flex; align-items: end; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
+.goalForm label { flex: 1; min-width: 140px; margin-bottom: 0; }
+.calendar { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 5px; margin: 16px 0; }
+.weekday { text-align: center; font-size: 11px; color: var(--muted); padding: 6px 0; }
+.day { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 48px; border-radius: 6px; background: #f1f0ea; color: var(--ink); font-size: 12px; }
+.done { color: #fff; background: var(--accent); }
+.future { opacity: .45; }
+.weeks { list-style: none; padding: 0; }
+.weeks li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 12px; padding: 14px 0; border-top: 1px solid var(--line); font-size: 12px; }
+.weeks li > span:last-child { color: var(--muted); }
+@media (max-width: 420px) { .panel { padding: 16px; } .calendar { gap: 3px; } .goalForm button { width: 100%; } }

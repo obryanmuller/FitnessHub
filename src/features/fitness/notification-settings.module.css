@@ -9,3 +9,10 @@
 .options input { width: 20px; height: 20px; flex-shrink: 0; accent-color: #536440; }
 .notice { color: #536440; }
 .notifications button:disabled { cursor: default; opacity: .5; }
+
+.preferences { padding: 0; margin: 0; border: 0; min-width: 0; }
+.schedule { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 18px 0; }
+.schedule label { min-width: 0; }
+.disable { margin-left: 10px; }
+.heading p, .info, .notice { font-size: 13px; }
+@media (max-width: 360px) { .schedule { grid-template-columns: 1fr; } .disable { margin-left: 0; } }
